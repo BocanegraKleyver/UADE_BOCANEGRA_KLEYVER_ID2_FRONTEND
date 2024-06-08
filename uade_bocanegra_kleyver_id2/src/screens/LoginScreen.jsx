@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import Swal from 'sweetalert2';
+import { Form, Button, Container } from 'react-bootstrap';
 
 const LoginScreen = () => {
   const navigate = useNavigate();
@@ -35,6 +36,10 @@ const LoginScreen = () => {
         throw new Error('Usuario o contraseña incorrectos');
       }
 
+      const user = await response.json();
+      // Guardar el usuario en el localStorage
+      localStorage.setItem('user', JSON.stringify(user));
+
       // Mostrar mensaje de éxito
       Swal.fire({
         icon: 'success',
@@ -58,33 +63,35 @@ const LoginScreen = () => {
   };
 
   return (
-    <div>
-      <h2>Iniciar Sesión</h2>
-      <form onSubmit={handleSubmit}>
-        <div>
-          <label>Usuario:</label>
-          <input
+    <Container>
+      <h2 className="my-4">Iniciar Sesión</h2>
+      <Form onSubmit={handleSubmit}>
+        <Form.Group controlId="usuario">
+          <Form.Label>Usuario:</Form.Label>
+          <Form.Control
             type="text"
-            name="usuario" // Cambiar a 'usuario' en lugar de 'username'
+            name="usuario"
             value={credentials.usuario}
             onChange={handleChange}
             required
           />
-        </div>
-        <div>
-          <label>Contraseña:</label>
-          <input
+        </Form.Group>
+        <Form.Group controlId="password">
+          <Form.Label>Contraseña:</Form.Label>
+          <Form.Control
             type="password"
             name="password"
             value={credentials.password}
             onChange={handleChange}
             required
           />
-        </div>
-        <button type="submit">Iniciar Sesión</button>
-      </form>
-      <p>¿No tienes una cuenta? <Link to="/register">Regístrate aquí</Link></p>
-    </div>
+        </Form.Group>
+        <Button className="mt-3" variant="primary" type="submit">
+          Iniciar Sesión
+        </Button>
+      </Form>
+      <p className="mt-3">¿No tienes una cuenta? <Link to="/register">Regístrate aquí</Link></p>
+    </Container>
   );
 };
 

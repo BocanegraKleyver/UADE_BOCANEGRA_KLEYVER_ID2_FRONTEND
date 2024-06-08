@@ -7,3 +7,4 @@ Legajo: 1116590
 4: Creo registerScreen.
 5: Conecto con mongodb, registro y login de usuarios correcto contra la base.
 6: Pruebas test de login y cerrar sesion correctas.
+7: Creacion de producto screen y subida de immagenes.

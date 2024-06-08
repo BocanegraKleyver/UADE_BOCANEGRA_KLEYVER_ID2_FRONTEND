@@ -35,8 +35,6 @@ const LoginScreen = () => {
         throw new Error('Usuario o contraseña incorrectos');
       }
 
-      const data = await response.json();
-
       // Mostrar mensaje de éxito
       Swal.fire({
         icon: 'success',

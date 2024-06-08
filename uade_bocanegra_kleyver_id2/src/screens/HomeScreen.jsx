@@ -1,31 +1,31 @@
 // HomeScreen.jsx
-import React from 'react';
-import { useNavigate } from 'react-router-dom';
+
+import React from "react";
+import { useNavigate } from "react-router-dom";
 import Swal from 'sweetalert2';
 
 const HomeScreen = () => {
   const navigate = useNavigate();
 
   const handleLogout = () => {
-    localStorage.removeItem('user'); // Elimina el usuario del localStorage
-
-    // Mostrar un mensaje de despedida
+    // Limpiar el almacenamiento local
+    localStorage.removeItem('user');
+    // Mostrar mensaje de despedida
     Swal.fire({
-      icon: 'success',
+      icon: 'info',
       title: '¡Hasta luego!',
-      text: 'Has cerrado sesión exitosamente.',
-      onClose: () => {
-        // Redirecciona al login después de cerrar el mensaje
-        navigate('/'); // Redirige a la página de inicio
-      }
+      text: 'Gracias por estar con nosotros. ¡Te esperamos pronto!',
+    }).then(() => {
+      // Redirigir a la página de inicio de sesión
+      navigate('/');
     });
   };
 
   return (
     <div>
-      <h2>Bienvenido</h2>
-      <p>¡Gracias por registrarte!</p>
-      <button onClick={handleLogout}>Cerrar sesión</button>
+      <h2>Bienvenido al HomeScreen</h2>
+      {/* Botón de Cerrar Sesión */}
+      <button onClick={handleLogout}>Cerrar Sesión</button>
     </div>
   );
 };

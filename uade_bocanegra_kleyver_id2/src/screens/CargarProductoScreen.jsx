@@ -9,6 +9,7 @@ const CargarProductoScreen = () => {
     nombre: '',
     descripcion: '',
     precio: 0,
+    cantidad: 1,
     imagen: '',
     comentario: '', // Cambiado de comentarios a comentario
     video: ''
@@ -54,6 +55,7 @@ const CargarProductoScreen = () => {
         nombre: '',
         descripcion: '',
         precio: 0,
+        cantidad: 1,
         imagen: '',
         comentario: '', // Cambiado de comentarios a comentario
         video: ''
@@ -116,6 +118,18 @@ const CargarProductoScreen = () => {
               required
             />
           </div>
+          <div className="col-md-6 mb-3">
+          <label htmlFor="cantidad" className="form-label">Cantidad:</label>
+          <input
+            type="text"
+            className="form-control"
+            id="cantidad"
+            name="cantidad"
+            value={producto.cantidad}
+            onChange={handleChange}
+            required
+          />
+        </div>
           <div className="col-md-6 mb-3">
             <label htmlFor="video" className="form-label">URL del video (opcional):</label>
             <input

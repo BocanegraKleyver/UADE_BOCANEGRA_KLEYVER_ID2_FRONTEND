@@ -33,7 +33,7 @@ const ProductosScreen = () => {
               <Card.Body>
                 <Card.Title>{producto.nombre}</Card.Title>
                 <Card.Text>{producto.descripcion}</Card.Text>
-                <Card.Text>Precio: ${producto.precio}</Card.Text>
+                <Card.Text>Precio: ${producto.precio}, Cantidad: {producto.cantidad}</Card.Text>
                 {/* Agregamos un enlace para ver más detalles del producto */}
                 <Link to={`/producto/${producto.id}`} className="btn btn-primary">
                   Ver Producto

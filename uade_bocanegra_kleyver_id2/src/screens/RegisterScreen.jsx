@@ -1,33 +1,95 @@
-// RegisterScreen.jsx
-
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import Swal from 'sweetalert2';
 
 const RegisterScreen = () => {
+  const navigate = useNavigate();
+
   const [user, setUser] = useState({
     nombre: '',
     direccion: '',
-    dni: '',
-    categoria: '',
+    documentoIdentidad: '',
+    categoria: 'LOW',
     usuario: '',
     password: '',
     email: ''
   });
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    
+    try {
+      // Validaciones de campos
+      if (!user.nombre || !user.direccion || !user.email) {
+        throw new Error('Todos los campos son obligatorios, excepto la categoría');
+      }
+      if (user.nombre.length < 3) {
+        throw new Error('El nombre debe tener al menos 3 caracteres');
+      }
+      if (user.direccion.length < 5) {
+        throw new Error('La dirección debe tener al menos 5 caracteres');
+      }
+      if (!validateEmail(user.email)) {
+        throw new Error('El email ingresado no es válido');
+      }
+
+      const response = await fetch('http://localhost:8080/api/usuario/register', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(user)
+      });
+
+      if (!response.ok) {
+        throw new Error('Error en la solicitud');
+      }
+
+      setUser({
+        nombre: '',
+        direccion: '',
+        documentoIdentidad: '',
+        categoria: 'LOW',
+        usuario: '',
+        password: '',
+        email: ''
+      });
+
+      Swal.fire({
+        icon: 'success',
+        title: '¡Registro exitoso!',
+        text: 'Bienvenido a nuestra plataforma.',
+      });
+
+      // Redireccionamos a la página de inicio
+      navigate('/home');
+
+    } catch (error) {
+      console.error('Error:', error.message);
+      Swal.fire({
+        icon: 'error',
+        title: 'Error',
+        text: error.message,
+      });
+    }
+  };
 
   const handleChange = (e) => {
     const { name, value } = e.target;
     setUser({ ...user, [name]: value });
   };
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    // Aquí puedes agregar la lógica para enviar los datos de registro al backend
-    console.log('Datos de registro:', user);
+  // Función para validar email
+  const validateEmail = (email) => {
+    const re = /\S+@\S+\.\S+/;
+    return re.test(email);
   };
 
   return (
     <div>
       <h2>Registrarse</h2>
       <form onSubmit={handleSubmit}>
+        {/* Campos del formulario */}
         <div>
           <label>Nombre:</label>
           <input
@@ -35,6 +97,7 @@ const RegisterScreen = () => {
             name="nombre"
             value={user.nombre}
             onChange={handleChange}
+            required
           />
         </div>
         <div>
@@ -44,14 +107,15 @@ const RegisterScreen = () => {
             name="direccion"
             value={user.direccion}
             onChange={handleChange}
+            required
           />
         </div>
         <div>
-          <label>DNI:</label>
+          <label>Documento de Identidad:</label>
           <input
             type="text"
-            name="dni"
-            value={user.dni}
+            name="documentoIdentidad"
+            value={user.documentoIdentidad}
             onChange={handleChange}
           />
         </div>
@@ -89,6 +153,7 @@ const RegisterScreen = () => {
             name="email"
             value={user.email}
             onChange={handleChange}
+            required
           />
         </div>
         <button type="submit">Registrarse</button>

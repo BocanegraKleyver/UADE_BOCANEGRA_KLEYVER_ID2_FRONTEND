@@ -3,3 +3,6 @@ Alumno:Bocanegra Kleyver Alexander
 Legajo: 1116590
 1: Instalar react , dom , npm install y dependecias.
 2: Crear loginscreen.
+3: Creo Homescreen
+4: Creo registerScreen.
+5: Conecto con mongodb, registro y login de usuarios correcto contra la base.

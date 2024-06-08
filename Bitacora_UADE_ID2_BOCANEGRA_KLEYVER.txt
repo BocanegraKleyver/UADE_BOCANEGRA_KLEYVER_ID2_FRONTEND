@@ -1,0 +1,5 @@
+Bitacora: uade_id2_bocanegra_kleyver
+Alumno:Bocanegra Kleyver Alexander
+Legajo: 1116590
+1: Instalar react , dom , npm install y dependecias.
+2: Crear loginscreen.

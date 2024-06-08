@@ -6,8 +6,8 @@ const HomeScreen = () => {
   return (
     <Container>
       <div className="text-center mt-5">
-      <h1>¡Descubre la comodidad perfecta con KleyStore!</h1>
-      <p>Explora nuestra amplia selección de sillas diseñadas para ti</p>
+        <h1>¡Descubre la comodidad perfecta con KleyStore!</h1>
+        <p>Explora nuestra amplia selección de sillas diseñadas para ti</p>
         <Link to="/productos" className="btn btn-primary mt-3">
           Explorar Sillas
         </Link>

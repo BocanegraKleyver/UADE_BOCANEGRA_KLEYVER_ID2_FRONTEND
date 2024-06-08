@@ -2,12 +2,13 @@ import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import Swal from 'sweetalert2';
 import { Form, Button, Container } from 'react-bootstrap';
+import nuveVoladora from '../assets/img/nubeVoladora.jpg'; // Importa la imagen de la silla
 
 const LoginScreen = () => {
   const navigate = useNavigate();
 
   const [credentials, setCredentials] = useState({
-    usuario: '', // Cambiar a 'usuario' en lugar de 'username'
+    usuario: '',
     password: ''
   });
 
@@ -20,7 +21,7 @@ const LoginScreen = () => {
     e.preventDefault();
 
     try {
-      if (!credentials.usuario || !credentials.password) { // Cambiar a 'usuario' en lugar de 'username'
+      if (!credentials.usuario || !credentials.password) {
         throw new Error('Por favor, ingresa el usuario y la contraseña');
       }
 
@@ -63,10 +64,11 @@ const LoginScreen = () => {
   };
 
   return (
-    <Container>
-      <h2 className="my-4">Iniciar Sesión</h2>
-      <Form onSubmit={handleSubmit}>
-        <Form.Group controlId="usuario">
+    <Container className="d-flex flex-column align-items-center text-center">
+      <img src={nuveVoladora} alt="Silla" style={{ maxWidth: '200px', marginBottom: '20px' }} />
+      <h2 className="my-4">Bienvenido a KleyStore</h2>
+      <Form onSubmit={handleSubmit} style={{ width: '300px' }}>
+        <div className="mb-3">
           <Form.Label>Usuario:</Form.Label>
           <Form.Control
             type="text"
@@ -75,8 +77,8 @@ const LoginScreen = () => {
             onChange={handleChange}
             required
           />
-        </Form.Group>
-        <Form.Group controlId="password">
+        </div>
+        <div className="mb-3">
           <Form.Label>Contraseña:</Form.Label>
           <Form.Control
             type="password"
@@ -85,7 +87,7 @@ const LoginScreen = () => {
             onChange={handleChange}
             required
           />
-        </Form.Group>
+        </div>
         <Button className="mt-3" variant="primary" type="submit">
           Iniciar Sesión
         </Button>

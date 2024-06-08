@@ -11,6 +11,7 @@ import HomeScreen from "./screens/HomeScreen";
 import ProductosScreen from "./screens/ProductosScreen";
 import ContactoScreen from "./screens/ContactoScreen";
 import CarritoScreen from "./screens/CarritoScreen";
+import CargarProductoScreen from "./screens/CargarProductoScreen"; // Importa la pantalla de cargar producto
 import NavigationBar from "./components/NavigationBar";
 
 const App = () => {
@@ -28,6 +29,12 @@ const App = () => {
         <Route exact path="/productos" element={<ProductosScreen />} />
         <Route exact path="/contacto" element={<ContactoScreen />} />
         <Route exact path="/carrito" element={<CarritoScreen />} />
+        {/* Agrega la ruta para cargar producto */}
+        <Route
+          exact
+          path="/cargar-producto"
+          element={<CargarProductoScreen />}
+        />
       </Routes>
     </div>
   );

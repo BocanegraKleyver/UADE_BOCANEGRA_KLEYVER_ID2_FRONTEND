@@ -9,3 +9,4 @@ Legajo: 1116590
 6: Pruebas test de login y cerrar sesion correctas.
 7: Creacion de producto screen y subida de immagenes.
 8: NavBar , login, producto, funcionan, desde el frontend, desde punto se crear los productos en el backend.
+9: Carga de producto correcto.

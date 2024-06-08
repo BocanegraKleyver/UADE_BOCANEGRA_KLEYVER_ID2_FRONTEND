@@ -22,6 +22,9 @@ const NavigationBar = () => {
     navigate('/login');
   };
 
+  // Verificar si el usuario está autenticado
+  const isAuth = localStorage.getItem('user');
+
   return (
     <Navbar bg="dark" variant="dark" expand="lg" className="justify-content-center">
       <Container>
@@ -36,6 +39,10 @@ const NavigationBar = () => {
             <Nav.Link as={Link} to="/productos">Productos</Nav.Link>
             <Nav.Link as={Link} to="/contacto">Contacto</Nav.Link>
             <Nav.Link as={Link} to="/carrito">Carrito</Nav.Link>
+            {/* Mostrar la opción "Cargar Producto" solo si el usuario está autenticado */}
+            {isAuth && (
+              <Nav.Link as={Link} to="/cargar-producto">Cargar Producto</Nav.Link>
+            )}
             <Nav.Link as={Link} to="/" onClick={handleLogout}>Cerrar Sesión</Nav.Link>
           </Nav>
         </Navbar.Collapse>

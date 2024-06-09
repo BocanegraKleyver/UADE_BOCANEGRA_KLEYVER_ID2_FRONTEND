@@ -1,7 +1,7 @@
 // Importa useState y useEffect
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { Container, Row, Col, Card } from "react-bootstrap"; 
+import { Container, Row, Col, Card, Button } from "react-bootstrap"; // Agregué Button de react-bootstrap
 import axios from "axios";
 
 const ProductosScreen = () => {
@@ -19,7 +19,11 @@ const ProductosScreen = () => {
       console.error("Error al obtener productos:", error.response ? error.response.data : error.message);
     }
   };
-  
+
+  const agregarAlCarrito = (producto) => {
+    // Aquí puedes implementar la lógica para agregar el producto al carrito
+    console.log("Agregando al carrito:", producto);
+  };
 
   return (
     <Container>
@@ -34,8 +38,11 @@ const ProductosScreen = () => {
                 <Card.Title>{producto.nombre}</Card.Title>
                 <Card.Text>{producto.descripcion}</Card.Text>
                 <Card.Text>Precio: ${producto.precio}, Cantidad: {producto.cantidad}</Card.Text>
+                <Button onClick={() => agregarAlCarrito(producto)} variant="primary">
+                  Agregar al carrito
+                </Button>
                 {/* Agregamos un enlace para ver más detalles del producto */}
-                <Link to={`/producto/${producto.id}`} className="btn btn-primary">
+                <Link to={`/producto/${producto.id}`} className="btn btn-secondary ml-2">
                   Ver Producto
                 </Link>
               </Card.Body>

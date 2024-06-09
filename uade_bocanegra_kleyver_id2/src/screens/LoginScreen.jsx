@@ -37,10 +37,6 @@ const LoginScreen = () => {
         throw new Error('Usuario o contraseña incorrectos');
       }
 
-      const user = await response.json();
-      // Guardar el usuario en el localStorage
-      localStorage.setItem('user', JSON.stringify(user));
-
       // Mostrar mensaje de éxito
       Swal.fire({
         icon: 'success',

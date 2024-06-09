@@ -1,8 +1,24 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { Container, Button } from "react-bootstrap"; // Importa los componentes de Bootstrap
+import { Container, Row, Col, Card, Button } from "react-bootstrap";
+import axios from "axios";
 
 const HomeScreen = () => {
+  const [productos, setProductos] = useState([]);
+
+  useEffect(() => {
+    obtenerProductos();
+  }, []);
+
+  const obtenerProductos = async () => {
+    try {
+      const response = await axios.get("http://localhost:8080/api/producto");
+      setProductos(response.data);
+    } catch (error) {
+      console.error("Error al obtener productos:", error.response ? error.response.data : error.message);
+    }
+  };
+
   return (
     <Container>
       <div className="text-center mt-5">
@@ -16,27 +32,24 @@ const HomeScreen = () => {
       {/* Sección de Destacados */}
       <div className="mt-5">
         <h2 className="mb-4">Productos Destacados</h2>
-        {/* Aquí puedes agregar productos destacados */}
-        <div className="row">
-          {/* Ejemplo de producto destacado */}
-          <div className="col-md-4 mb-3">
-            <div className="card">
-              <img
-                src="https://via.placeholder.com/300"
-                className="card-img-top"
-                alt="Producto Destacado"
-              />
-              <div className="card-body">
-                <h5 className="card-title">Silla Gamer X</h5>
-                <p className="card-text">$9999</p>
-                <Link to="/producto/1" className="btn btn-primary">
-                  Ver Producto
-                </Link>
-              </div>
-            </div>
-          </div>
-          {/* Puedes agregar más productos destacados aquí */}
-        </div>
+        {/* Mostrar productos desde la base de datos */}
+        <Row>
+          {productos.map((producto) => (
+            <Col md={4} key={producto.id} className="mb-3">
+              <Card>
+                <Card.Img variant="top" src={producto.imagen} alt={producto.nombre} />
+                <Card.Body>
+                  <Card.Title>{producto.nombre}</Card.Title>
+                  <Card.Text>{producto.descripcion}</Card.Text>
+                  <Card.Text>Precio: ${producto.precio}</Card.Text>
+                  <Link to={`/producto/${producto.id}`} className="btn btn-primary">
+                    Ver Producto
+                  </Link>
+                </Card.Body>
+              </Card>
+            </Col>
+          ))}
+        </Row>
       </div>
     </Container>
   );

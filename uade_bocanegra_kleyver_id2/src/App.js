@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import {
   BrowserRouter as Router,
   Route,
@@ -11,9 +11,11 @@ import HomeScreen from "./screens/HomeScreen";
 import ProductosScreen from "./screens/ProductosScreen";
 import ContactoScreen from "./screens/ContactoScreen";
 import CarritoScreen from "./screens/CarritoScreen";
-import CargarProductoScreen from "./screens/CargarProductoScreen"; // Importa la pantalla de cargar producto
-import ProductoDetalleScreen from "./screens/ProductoDetalleScreen"; // Importa la pantalla de detalle del producto
+import CargarProductoScreen from "./screens/CargarProductoScreen";
+import ProductoDetalleScreen from "./screens/ProductoDetalleScreen";
 import NavigationBar from "./components/NavigationBar";
+import { UsuarioProvider } from "./screens/UsuarioContext";
+import { CarritoProvider } from "./screens/CarritoContext";
 
 const App = () => {
   const location = useLocation();
@@ -42,9 +44,24 @@ const App = () => {
 };
 
 const AppWrapper = () => {
+  const [usuarioId, setUsuarioId] = useState(null);
+
+  useEffect(() => {
+    const usuarioIdFromSession = sessionStorage.getItem("usuarioId");
+    if (usuarioIdFromSession) {
+      setUsuarioId(usuarioIdFromSession);
+    }
+  }, []);
+
   return (
     <Router>
-      <App />
+      <UsuarioProvider value={{ usuarioId, setUsuarioId }}>
+        <CarritoProvider usuarioId={usuarioId}>
+          {" "}
+          {/* Pasar usuarioId como prop al CarritoProvider */}
+          <App />
+        </CarritoProvider>
+      </UsuarioProvider>
     </Router>
   );
 };

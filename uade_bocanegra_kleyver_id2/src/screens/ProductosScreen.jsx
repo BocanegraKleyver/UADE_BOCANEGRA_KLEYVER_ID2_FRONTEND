@@ -1,11 +1,15 @@
-// Importa useState y useEffect
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { Link } from "react-router-dom";
-import { Container, Row, Col, Card, Button } from "react-bootstrap"; // Agregué Button de react-bootstrap
+import { Container, Row, Col, Card, Button } from "react-bootstrap";
 import axios from "axios";
+import { CarritoContext } from '../screens/CarritoContext';
+import { UsuarioContext } from '../screens/UsuarioContext'; // Importa el contexto del usuario
 
 const ProductosScreen = () => {
   const [productos, setProductos] = useState([]);
+  const [cantidadSeleccionada, setCantidadSeleccionada] = useState({});
+  const { agregarAlCarrito, carrito } = useContext(CarritoContext);
+  const { usuarioId } = useContext(UsuarioContext); // Obtiene el usuarioId del contexto
 
   useEffect(() => {
     obtenerProductos();
@@ -20,9 +24,29 @@ const ProductosScreen = () => {
     }
   };
 
-  const agregarAlCarrito = (producto) => {
-    // Aquí puedes implementar la lógica para agregar el producto al carrito
-    console.log("Agregando al carrito:", producto);
+  const incrementarCantidad = (id) => {
+    setCantidadSeleccionada((prevState) => ({
+      ...prevState,
+      [id]: (prevState[id] || 0) + 1,
+    }));
+  };
+
+  const decrementarCantidad = (id) => {
+    setCantidadSeleccionada((prevState) => ({
+      ...prevState,
+      [id]: prevState[id] > 0 ? prevState[id] - 1 : 0,
+    }));
+  };
+
+  const handleAgregarAlCarrito = (producto) => {
+    const cantidad = cantidadSeleccionada[producto.id] || 1;
+    // Verificar si el usuario está autenticado y tiene un usuarioId disponible
+    if (usuarioId) {
+      agregarAlCarrito(producto.id, cantidad, usuarioId);
+    } else {
+      console.error("Usuario no autenticado o usuarioId no disponible");
+      // Manejar el caso de que el usuario no esté autenticado
+    }
   };
 
   return (
@@ -32,16 +56,23 @@ const ProductosScreen = () => {
         {productos.map((producto) => (
           <Col md={4} key={producto.id} className="mb-3">
             <Card>
-              {/* Asegúrate de que el campo nombre, descripcion y precio existan en tu objeto producto */}
               <Card.Img variant="top" src={producto.imagen} alt={producto.nombre} />
               <Card.Body>
                 <Card.Title>{producto.nombre}</Card.Title>
                 <Card.Text>{producto.descripcion}</Card.Text>
                 <Card.Text>Precio: ${producto.precio}, Cantidad: {producto.cantidad}</Card.Text>
-                <Button onClick={() => agregarAlCarrito(producto)} variant="primary">
+                <div className="d-flex align-items-center mb-2">
+                  <Button variant="secondary" onClick={() => decrementarCantidad(producto.id)}>
+                    -
+                  </Button>
+                  <span className="mx-2">{cantidadSeleccionada[producto.id] || 0}</span>
+                  <Button variant="secondary" onClick={() => incrementarCantidad(producto.id)}>
+                    +
+                  </Button>
+                </div>
+                <Button onClick={() => handleAgregarAlCarrito(producto)} variant="primary">
                   Agregar al carrito
                 </Button>
-                {/* Agregamos un enlace para ver más detalles del producto */}
                 <Link to={`/producto/${producto.id}`} className="btn btn-secondary ml-2">
                   Ver Producto
                 </Link>

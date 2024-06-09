@@ -17,7 +17,7 @@ const RegisterScreen = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
+
     try {
       // Validaciones de campos
       if (!user.nombre || !user.direccion || !user.email) {
@@ -45,27 +45,19 @@ const RegisterScreen = () => {
         throw new Error('Error en la solicitud');
       }
 
-      setUser({
-        nombre: '',
-        direccion: '',
-        documentoIdentidad: '',
-        categoria: 'LOW',
-        usuario: '',
-        password: '',
-        email: ''
-      });
-
+      // Mostrar mensaje de éxito
       Swal.fire({
         icon: 'success',
         title: '¡Registro exitoso!',
         text: 'Bienvenido a nuestra plataforma.',
       });
 
-      // Redireccionamos a la página de inicio
-      navigate('/home');
+      // Redireccionar a la página de inicio de sesión
+      navigate('/login');
 
     } catch (error) {
       console.error('Error:', error.message);
+      // Mostrar mensaje de error
       Swal.fire({
         icon: 'error',
         title: 'Error',

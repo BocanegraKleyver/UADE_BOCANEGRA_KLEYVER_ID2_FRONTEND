@@ -11,3 +11,4 @@ Legajo: 1116590
 8: NavBar , login, producto, funcionan, desde el frontend, desde punto se crear los productos en el backend.
 9: Carga de producto correcto.
 10: Comienzo de la creacion del carrito
+11: Cree carrito, y carrito producto, ambos impactan en la BD, falta la logica de cantidad en el carrito. Por postman me da id carrito null.

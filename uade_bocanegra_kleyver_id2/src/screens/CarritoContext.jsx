@@ -1,45 +1,31 @@
-// CarritoContext.js
-import React, { createContext, useState, useEffect } from 'react';
+import React, { createContext, useState } from 'react';
 import axios from 'axios';
 
 export const CarritoContext = createContext();
 
-export const CarritoProvider = ({ children, usuarioId }) => {
-  const [carrito, setCarrito] = useState(null);
+export const CarritoProvider = ({ children }) => {
+  const [carrito, setCarrito] = useState({ carritoProducto: [] });
 
-  const obtenerCarrito = async () => {
+  const obtenerCarrito = async (usuarioId) => {
     try {
       const response = await axios.get(`http://localhost:8080/api/carrito/${usuarioId}`);
       setCarrito(response.data);
     } catch (error) {
-      console.error('Error al obtener el carrito:', error);
+      console.error("Error al obtener el carrito:", error.response ? error.response.data : error.message);
     }
   };
 
-  useEffect(() => {
-    obtenerCarrito();
-  }, [usuarioId]);
-
-  const agregarAlCarrito = async (productoId, cantidad) => {
+  const eliminarDelCarrito = async (usuarioId, productoId) => {
     try {
-      await axios.put(`http://localhost:8080/api/carrito/${usuarioId}/producto`, { productoId, cantidad });
-      obtenerCarrito();
+      await axios.delete(`http://localhost:8080/api/carrito/${usuarioId}/carritoProducto/producto/${productoId}`);
+      obtenerCarrito(usuarioId); // Actualiza el carrito después de eliminar un producto
     } catch (error) {
-      console.error('Error al agregar al carrito:', error);
-    }
-  };
-
-  const eliminarDelCarrito = async (productoId) => {
-    try {
-      await axios.delete(`http://localhost:8080/api/carrito/${usuarioId}/producto/${productoId}`);
-      obtenerCarrito();
-    } catch (error) {
-      console.error('Error al eliminar del carrito:', error);
+      console.error("Error al eliminar producto del carrito:", error.response ? error.response.data : error.message);
     }
   };
 
   return (
-    <CarritoContext.Provider value={{ carrito, agregarAlCarrito, eliminarDelCarrito }}>
+    <CarritoContext.Provider value={{ carrito, obtenerCarrito, eliminarDelCarrito }}>
       {children}
     </CarritoContext.Provider>
   );

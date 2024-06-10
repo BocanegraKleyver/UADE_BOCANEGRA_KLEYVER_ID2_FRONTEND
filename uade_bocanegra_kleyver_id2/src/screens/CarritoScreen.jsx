@@ -1,21 +1,22 @@
 import React, { useContext, useEffect } from 'react';
 import { Container, Row, Col, Button } from 'react-bootstrap';
-import { CarritoContext } from '../screens/CarritoContext';
-import { UsuarioContext } from '../screens/UsuarioContext';
+import { CarritoContext } from '../screens/CarritoContext'; // Ajusta la ruta según tu estructura de carpetas
+import { UsuarioContext } from '../screens/UsuarioContext'; // Ajusta la ruta según tu estructura de carpetas
 
 const CarritoScreen = () => {
   const { carrito, obtenerCarrito, eliminarDelCarrito } = useContext(CarritoContext);
-  const { usuarioId } = useContext(UsuarioContext);
+  const { usuarioId } = useContext(UsuarioContext); // Obtener el usuarioId del contexto
 
   useEffect(() => {
-    // Al cargar el componente, obtenemos el carrito del usuario si hay un usuario autenticado
     if (usuarioId) {
-      obtenerCarrito(usuarioId);
+      obtenerCarrito(usuarioId); // Al cargar el componente, obtenemos el carrito del usuario
     }
-  }, [usuarioId, obtenerCarrito]);
+  }, [usuarioId]); // Agregar usuarioId como dependencia
 
   const handleEliminarDelCarrito = (productoId) => {
-    eliminarDelCarrito(productoId, usuarioId); // Pasamos el usuarioId al eliminar del carrito
+    if (usuarioId) {
+      eliminarDelCarrito(usuarioId, productoId); // Solo necesitamos enviar el ID del producto y el usuarioId
+    }
   };
 
   return (
@@ -26,7 +27,7 @@ const CarritoScreen = () => {
           <p>Estos son los productos en tu carrito:</p>
           <Row>
             {carrito.carritoProducto.map((carritoProducto) => (
-              <Col md={4} key={carritoProducto.id} className="mb-3">
+              <Col md={4} key={carritoProducto.producto.id} className="mb-3">
                 <div className="card">
                   <img src={carritoProducto.producto.imagen} className="card-img-top" alt={carritoProducto.producto.nombre} />
                   <div className="card-body">
@@ -41,7 +42,7 @@ const CarritoScreen = () => {
           </Row>
         </div>
       ) : (
-        <p>{usuarioId ? 'No hay productos en tu carrito.' : 'Por favor inicia sesión para ver tu carrito.'}</p>
+        <p>No hay productos en tu carrito.</p>
       )}
     </Container>
   );

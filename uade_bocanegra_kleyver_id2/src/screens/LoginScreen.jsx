@@ -1,13 +1,11 @@
-import React, { useState, useContext } from 'react';
+import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import Swal from 'sweetalert2';
 import { Form, Button, Container } from 'react-bootstrap';
 import nuveVoladora from '../assets/img/nubeVoladora.jpg'; // Importa la imagen de la silla
-import { UsuarioContext } from '../screens/UsuarioContext'; // Importa el contexto del usuario
 
 const LoginScreen = () => {
   const navigate = useNavigate();
-  const { login } = useContext(UsuarioContext);
 
   const [credentials, setCredentials] = useState({
     usuario: '',
@@ -38,11 +36,6 @@ const LoginScreen = () => {
       if (!response.ok) {
         throw new Error('Usuario o contraseña incorrectos');
       }
-
-      const data = await response.json(); // Obtén los datos de la respuesta
-
-      // Guardar el usuario en el contexto del usuario
-      login(data.usuario);
 
       // Mostrar mensaje de éxito
       Swal.fire({

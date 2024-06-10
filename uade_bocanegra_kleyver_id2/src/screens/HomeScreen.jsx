@@ -29,10 +29,8 @@ const HomeScreen = () => {
         </Link>
       </div>
 
-      {/* Sección de Destacados */}
       <div className="mt-5">
         <h2 className="mb-4">Productos Destacados</h2>
-        {/* Mostrar productos desde la base de datos */}
         <Row>
           {productos.map((producto) => (
             <Col md={4} key={producto.id} className="mb-3">

@@ -4,11 +4,17 @@ import "./index.css";
 import App from "./App";
 import "bootstrap/dist/css/bootstrap.min.css"; // Importa el CSS de Bootstrap
 import reportWebVitals from "./reportWebVitals";
+import { UsuarioProvider } from "./screens/UsuarioContext"; // Ajusta la ruta según tu estructura de carpetas
+import { CarritoProvider } from "./screens/CarritoContext"; // Ajusta la ruta según tu estructura de carpetas
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
   <React.StrictMode>
-    <App />
+    <UsuarioProvider>
+      <CarritoProvider>
+        <App />
+      </CarritoProvider>
+    </UsuarioProvider>
   </React.StrictMode>
 );
 

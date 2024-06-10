@@ -2,14 +2,14 @@ import React, { useState, useEffect, useContext } from "react";
 import { Link } from "react-router-dom";
 import { Container, Row, Col, Card, Button } from "react-bootstrap";
 import axios from "axios";
-import { CarritoContext } from '../screens/CarritoContext';
-import { UsuarioContext } from '../screens/UsuarioContext'; // Importa el contexto del usuario
+import { CarritoContext } from '../screens/CarritoContext'; // Ajusta la ruta según tu estructura de carpetas
+import { UsuarioContext } from '../screens/UsuarioContext'; // Ajusta la ruta según tu estructura de carpetas
 
 const ProductosScreen = () => {
   const [productos, setProductos] = useState([]);
   const [cantidadSeleccionada, setCantidadSeleccionada] = useState({});
-  const { agregarAlCarrito, carrito } = useContext(CarritoContext);
-  const { usuarioId } = useContext(UsuarioContext); // Obtiene el usuarioId del contexto
+  const { agregarAlCarrito } = useContext(CarritoContext);
+  const { usuarioId } = useContext(UsuarioContext);
 
   useEffect(() => {
     obtenerProductos();
@@ -40,9 +40,9 @@ const ProductosScreen = () => {
 
   const handleAgregarAlCarrito = (producto) => {
     const cantidad = cantidadSeleccionada[producto.id] || 1;
-    // Verificar si el usuario está autenticado y tiene un usuarioId disponible
     if (usuarioId) {
-      agregarAlCarrito(producto.id, cantidad, usuarioId);
+      agregarAlCarrito(producto, cantidad);
+      alert(`¡${cantidad} ${producto.nombre} agregado(s) al carrito!`);
     } else {
       console.error("Usuario no autenticado o usuarioId no disponible");
       // Manejar el caso de que el usuario no esté autenticado
@@ -60,7 +60,7 @@ const ProductosScreen = () => {
               <Card.Body>
                 <Card.Title>{producto.nombre}</Card.Title>
                 <Card.Text>{producto.descripcion}</Card.Text>
-                <Card.Text>Precio: ${producto.precio}, Cantidad: {producto.cantidad}</Card.Text>
+                <Card.Text>Precio: ${producto.precio}, Stock Disponible: {producto.cantidad}</Card.Text>
                 <div className="d-flex align-items-center mb-2">
                   <Button variant="secondary" onClick={() => decrementarCantidad(producto.id)}>
                     -

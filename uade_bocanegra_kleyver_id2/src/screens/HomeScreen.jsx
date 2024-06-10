@@ -17,6 +17,13 @@ const HomeScreen = () => {
   useEffect(() => {
     if (usuarioId) {
       obtenerCarrito(usuarioId); // Obtener el carrito del usuario
+    } else {
+      // Si no hay usuarioId (por ejemplo, después del registro), intenta obtenerlo del localStorage
+      const storedUser = localStorage.getItem('user');
+      if (storedUser) {
+        const userData = JSON.parse(storedUser);
+        obtenerCarrito(userData.id); // Obtener el carrito del usuario del localStorage
+      }
     }
   }, [usuarioId]); // Actualizar el carrito cuando el usuarioId cambie
 

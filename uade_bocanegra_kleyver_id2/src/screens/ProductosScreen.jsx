@@ -1,15 +1,18 @@
 import React, { useState, useEffect, useContext } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Container, Row, Col, Card, Button } from "react-bootstrap";
 import axios from "axios";
-import { CarritoContext } from '../screens/CarritoContext'; // Ajusta la ruta según tu estructura de carpetas
-import { UsuarioContext } from '../screens/UsuarioContext'; // Ajusta la ruta según tu estructura de carpetas
+import { CarritoContext } from '../contexts/CarritoContext';
+import { UsuarioContext } from '../contexts/UsuarioContext';
+import { CarritoProductoContext } from '../contexts/CarritoProductoContext';
 
 const ProductosScreen = () => {
   const [productos, setProductos] = useState([]);
   const [cantidadSeleccionada, setCantidadSeleccionada] = useState({});
   const { agregarAlCarrito } = useContext(CarritoContext);
   const { usuarioId } = useContext(UsuarioContext);
+  const { agregarProductoAlCarrito } = useContext(CarritoProductoContext);
+  const navigate = useNavigate(); // Reemplaza useHistory por useNavigate
 
   useEffect(() => {
     obtenerProductos();
@@ -38,14 +41,20 @@ const ProductosScreen = () => {
     }));
   };
 
-  const handleAgregarAlCarrito = (producto) => {
+  const handleAgregarAlCarrito = async (producto) => {
     const cantidad = cantidadSeleccionada[producto.id] || 1;
-    if (usuarioId) {
-      agregarAlCarrito(producto, cantidad);
-      alert(`¡${cantidad} ${producto.nombre} agregado(s) al carrito!`);
-    } else {
-      console.error("Usuario no autenticado o usuarioId no disponible");
-      // Manejar el caso de que el usuario no esté autenticado
+    try {
+      if (usuarioId) {
+        // Agregar al carrito
+        const carritoProducto = await agregarProductoAlCarrito(usuarioId, producto.id, cantidad);
+        alert(`¡${cantidad} ${producto.nombre} agregado(s) al carrito!`);
+      } else {
+        console.error("Usuario no autenticado o usuarioId no disponible");
+        // Redirigir al usuario a la página de inicio de sesión
+        navigate("/login");
+      }
+    } catch (error) {
+      console.error("Error al agregar producto al carrito:", error.response ? error.response.data : error.message);
     }
   };
 

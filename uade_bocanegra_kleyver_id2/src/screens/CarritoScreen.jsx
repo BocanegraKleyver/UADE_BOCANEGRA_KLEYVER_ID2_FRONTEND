@@ -1,7 +1,7 @@
 import React, { useContext, useEffect } from 'react';
 import { Container, Row, Col, Button } from 'react-bootstrap';
-import { CarritoContext } from '../screens/CarritoContext'; // Ajusta la ruta según tu estructura de carpetas
-import { UsuarioContext } from '../screens/UsuarioContext'; // Ajusta la ruta según tu estructura de carpetas
+import { CarritoContext } from '../contexts/CarritoContext'; // Ajusta la ruta según tu estructura de carpetas
+import { UsuarioContext } from '../contexts/UsuarioContext'; // Ajusta la ruta según tu estructura de carpetas
 
 const CarritoScreen = () => {
   const { carrito, obtenerCarrito, eliminarDelCarrito } = useContext(CarritoContext);

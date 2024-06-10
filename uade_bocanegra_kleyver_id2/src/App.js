@@ -14,8 +14,9 @@ import CarritoScreen from "./screens/CarritoScreen";
 import CargarProductoScreen from "./screens/CargarProductoScreen";
 import ProductoDetalleScreen from "./screens/ProductoDetalleScreen";
 import NavigationBar from "./components/NavigationBar";
-import { UsuarioProvider } from "./screens/UsuarioContext";
-import { CarritoProvider } from "./screens/CarritoContext";
+import { UsuarioProvider } from "./contexts/UsuarioContext";
+import { CarritoProvider } from "./contexts/CarritoContext";
+import { CarritoProductoProvider } from "./contexts/CarritoProductoContext"; // Agregado
 
 const App = () => {
   const location = useLocation();
@@ -57,9 +58,12 @@ const AppWrapper = () => {
     <Router>
       <UsuarioProvider value={{ usuarioId, setUsuarioId }}>
         <CarritoProvider usuarioId={usuarioId}>
-          {" "}
-          {/* Pasar usuarioId como prop al CarritoProvider */}
-          <App />
+          <CarritoProductoProvider>
+            {" "}
+            {/* Agregado */}
+            <App />
+          </CarritoProductoProvider>{" "}
+          {/* Agregado */}
         </CarritoProvider>
       </UsuarioProvider>
     </Router>

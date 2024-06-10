@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Swal from 'sweetalert2';
+import { UsuarioContext } from '../contexts/UsuarioContext';
 
 const RegisterScreen = () => {
   const navigate = useNavigate();
@@ -20,17 +21,14 @@ const RegisterScreen = () => {
 
     try {
       // Validaciones de campos
-      if (!user.nombre || !user.direccion || !user.email) {
-        throw new Error('Todos los campos son obligatorios, excepto la categoría');
+      if (!user.nombre || !user.direccion || !user.email || !user.password || !user.usuario) {
+        throw new Error('Todos los campos son obligatorios');
       }
       if (user.nombre.length < 3) {
         throw new Error('El nombre debe tener al menos 3 caracteres');
       }
       if (user.direccion.length < 5) {
         throw new Error('La dirección debe tener al menos 5 caracteres');
-      }
-      if (!validateEmail(user.email)) {
-        throw new Error('El email ingresado no es válido');
       }
 
       const response = await fetch('http://localhost:8080/api/usuario/register', {
@@ -45,6 +43,8 @@ const RegisterScreen = () => {
         throw new Error('Error en la solicitud');
       }
 
+      const userData = await response.json();
+
       // Mostrar mensaje de éxito
       Swal.fire({
         icon: 'success',
@@ -52,6 +52,9 @@ const RegisterScreen = () => {
         text: 'Bienvenido a nuestra plataforma.',
       });
 
+      // Iniciar sesión automáticamente después del registro
+      localStorage.setItem('user', JSON.stringify(userData));
+      
       // Redireccionar a la página de inicio de sesión
       navigate('/login');
 
@@ -69,12 +72,6 @@ const RegisterScreen = () => {
   const handleChange = (e) => {
     const { name, value } = e.target;
     setUser({ ...user, [name]: value });
-  };
-
-  // Función para validar email
-  const validateEmail = (email) => {
-    const re = /\S+@\S+\.\S+/;
-    return re.test(email);
   };
 
   return (
@@ -127,6 +124,7 @@ const RegisterScreen = () => {
             name="usuario"
             value={user.usuario}
             onChange={handleChange}
+            required
           />
         </div>
         <div>
@@ -136,6 +134,7 @@ const RegisterScreen = () => {
             name="password"
             value={user.password}
             onChange={handleChange}
+            required
           />
         </div>
         <div>

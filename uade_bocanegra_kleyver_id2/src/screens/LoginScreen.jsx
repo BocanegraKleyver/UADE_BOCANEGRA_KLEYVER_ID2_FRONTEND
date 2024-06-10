@@ -2,12 +2,12 @@ import React, { useState, useContext } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import Swal from 'sweetalert2';
 import { Form, Button, Container } from 'react-bootstrap';
-import nuveVoladora from '../assets/img/nubeVoladora.jpg'; // Importa la imagen de la silla
-import { UsuarioContext } from '../contexts/UsuarioContext'; // Importa el contexto del usuario
+import nuveVoladora from '../assets/img/nubeVoladora.jpg'; 
+import { UsuarioContext } from '../contexts/UsuarioContext'; 
 
 const LoginScreen = () => {
   const navigate = useNavigate();
-  const { login } = useContext(UsuarioContext); // Obtener el método login desde el contexto del usuario
+  const { login } = useContext(UsuarioContext);
 
   const [credentials, setCredentials] = useState({
     usuario: '',
@@ -27,22 +27,8 @@ const LoginScreen = () => {
         throw new Error('Por favor, ingresa el usuario y la contraseña');
       }
   
-      const response = await fetch('http://localhost:8080/api/usuario/login', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(credentials)
-      });
-  
-      const data = await response.json(); // Parseamos la respuesta del servidor
-  
-      if (!response.ok) {
-        throw new Error(data.error || 'Usuario o contraseña incorrectos');
-      }
-  
-      // Si el inicio de sesión es exitoso, llama al método login con los datos del usuario
-      login(data); // Aquí enviamos los datos del usuario
+      // Utilizamos el método login del contexto de usuario
+      await login(credentials);
   
       // Mostrar mensaje de éxito
       Swal.fire({

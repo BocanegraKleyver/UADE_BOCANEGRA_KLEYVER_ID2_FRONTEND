@@ -1,9 +1,11 @@
-import React, { createContext, useState } from 'react';
+import React, { createContext, useState, useContext } from 'react';
 import axios from 'axios';
+import { CarritoContext } from './CarritoContext';
 
 export const CarritoProductoContext = createContext();
 
 export const CarritoProductoProvider = ({ children }) => {
+  const { carritoId } = useContext(CarritoContext);
   const [carritoProductos, setCarritoProductos] = useState([]);
 
   const getAllCarritoProducto = async () => {
@@ -15,8 +17,11 @@ export const CarritoProductoProvider = ({ children }) => {
     }
   };
 
-  const agregarProductoAlCarrito = async (carritoId, productoRequest) => {
+  const agregarProductoAlCarrito = async (productoRequest) => {
     try {
+      if (!carritoId) {
+        throw new Error("No hay un carrito activo para agregar productos.");
+      }
       const response = await axios.post(`http://localhost:8080/api/carritoProducto/${carritoId}/producto`, productoRequest);
       setCarritoProductos([...carritoProductos, response.data]);
     } catch (error) {

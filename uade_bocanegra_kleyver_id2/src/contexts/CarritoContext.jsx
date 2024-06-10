@@ -1,11 +1,20 @@
-import React, { createContext, useState } from 'react';
+import React, { createContext, useState, useEffect } from 'react';
 import axios from 'axios';
+import { useContext } from 'react';
+import { UsuarioContext } from './UsuarioContext';
 
 export const CarritoContext = createContext();
 
 export const CarritoProvider = ({ children }) => {
+  const { usuarioId } = useContext(UsuarioContext);
   const [carrito, setCarrito] = useState({});
   const [carritoId, setCarritoId] = useState(null);
+
+  useEffect(() => {
+    if (usuarioId) {
+      obtenerCarrito(usuarioId);
+    }
+  }, [usuarioId]);
 
   const obtenerCarrito = async (usuarioId) => {
     try {
@@ -27,9 +36,9 @@ export const CarritoProvider = ({ children }) => {
     }
   };
 
-  const eliminarCarrito = async (carritoId) => {
+  const eliminarCarrito = async (usuarioId) => {
     try {
-      await axios.delete(`http://localhost:8080/api/carrito/${carritoId}`);
+      await axios.delete(`http://localhost:8080/api/carrito/${usuarioId}`);
       setCarrito({});
       setCarritoId(null);
     } catch (error) {
@@ -37,35 +46,31 @@ export const CarritoProvider = ({ children }) => {
     }
   };
 
-  const modificarEstadoCarrito = async (carritoId, estado) => {
+  const modificarEstadoCarrito = async (usuarioId, estado) => {
     try {
-      await axios.put(`http://localhost:8080/api/carrito/${carritoId}?estado=${estado}`);
-      // Actualizar el estado del carrito en el contexto
+      const response = await axios.put(`http://localhost:8080/api/carrito/${usuarioId}?estado=${estado}`);
       setCarrito((prevCarrito) => ({
         ...prevCarrito,
-        estado: estado,
+        activo: estado === 'activo',
       }));
     } catch (error) {
       console.error("Error al modificar el estado del carrito:", error.response ? error.response.data : error.message);
     }
   };
 
-  const agregarIdsCarritoProductoAlCarrito = async (carritoId, idsCarritoProducto) => {
+  const agregarIdsCarritoProductoAlCarrito = async (usuarioId, idsCarritoProducto) => {
     try {
-      await axios.post(`http://localhost:8080/api/carrito/${carritoId}/carritoProducto`, idsCarritoProducto);
+      const response = await axios.post(`http://localhost:8080/api/carrito/${usuarioId}/carritoProducto`, idsCarritoProducto);
       // Actualizar los IDs de los productos del carrito en el contexto
-      setCarrito((prevCarrito) => ({
-        ...prevCarrito,
-        carritoProductoId: idsCarritoProducto,
-      }));
+      setCarrito(response.data);
     } catch (error) {
       console.error("Error al agregar IDs de productos al carrito:", error.response ? error.response.data : error.message);
     }
   };
 
-  const eliminarCarritoProductoDelCarrito = async (carritoId, productoId) => {
+  const eliminarCarritoProductoDelCarrito = async (usuarioId, productoId) => {
     try {
-      await axios.delete(`http://localhost:8080/api/carrito/${carritoId}/carritoProducto/producto/${productoId}`);
+      await axios.delete(`http://localhost:8080/api/carrito/${usuarioId}/carritoProducto/producto/${productoId}`);
       // Remover el producto del carrito en el contexto
       setCarrito((prevCarrito) => ({
         ...prevCarrito,
@@ -76,8 +81,18 @@ export const CarritoProvider = ({ children }) => {
     }
   };
 
+  const logoutCarrito = async (usuarioId) => {
+    try {
+      await modificarEstadoCarrito(usuarioId, 'cerrado');
+      setCarrito({});
+      setCarritoId(null);
+    } catch (error) {
+      console.error("Error al cerrar sesión del carrito:", error.response ? error.response.data : error.message);
+    }
+  };
+
   return (
-    <CarritoContext.Provider value={{ carrito, carritoId, obtenerCarrito, crearCarrito, eliminarCarrito, modificarEstadoCarrito, agregarIdsCarritoProductoAlCarrito, eliminarCarritoProductoDelCarrito }}>
+    <CarritoContext.Provider value={{ carrito, carritoId, obtenerCarrito, crearCarrito, eliminarCarrito, modificarEstadoCarrito, agregarIdsCarritoProductoAlCarrito, eliminarCarritoProductoDelCarrito, logoutCarrito }}>
       {children}
     </CarritoContext.Provider>
   );

@@ -17,3 +17,4 @@ Legajo: 1116590
 15: Funcion del ID usuario en el navbar
 16: funciona el login con registro de sesion y actividad, hay que ver el register.
 17: El login, logout, register, sesion y usuarioactividad (login logout) funcionan. Lo que sigue es validar los productos.
+18: Implemento en el frontend carrito carrito producto y producto, procedo con el carritoscreen.

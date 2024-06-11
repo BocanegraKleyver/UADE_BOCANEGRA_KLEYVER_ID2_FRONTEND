@@ -9,7 +9,7 @@ import { CarritoProductoContext } from '../contexts/CarritoProductoContext';
 const ProductosScreen = () => {
   const [productos, setProductos] = useState([]);
   const [cantidadSeleccionada, setCantidadSeleccionada] = useState({});
-  const { agregarAlCarrito } = useContext(CarritoContext);
+  const { carritoId } = useContext(CarritoContext); // Obtener carritoId del contexto del carrito
   const { usuarioId } = useContext(UsuarioContext);
   const { agregarProductoAlCarrito } = useContext(CarritoProductoContext);
   const navigate = useNavigate(); // Reemplaza useHistory por useNavigate
@@ -46,12 +46,12 @@ const ProductosScreen = () => {
     try {
       if (usuarioId) {
         // Agregar al carrito
-        const requestBody = {
+        const productoRequest = {
           productoId: producto.id,
           cantidad: cantidad
         };
   
-        const response = await axios.post(`http://localhost:8080/api/carrito/${usuarioId}/carritoProducto`, requestBody, {
+        const response = await axios.post(`http://localhost:8080/api/carritoProducto/${carritoId}/producto`, productoRequest, {
           headers: {
             'Content-Type': 'application/json'
           }

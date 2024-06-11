@@ -1,6 +1,5 @@
-import React, { createContext, useState, useEffect } from 'react';
+import React, { createContext, useState, useEffect, useContext } from 'react';
 import axios from 'axios';
-import { useContext } from 'react';
 import { UsuarioContext } from './UsuarioContext';
 
 export const CarritoContext = createContext();
@@ -9,6 +8,8 @@ export const CarritoProvider = ({ children }) => {
   const { usuarioId } = useContext(UsuarioContext);
   const [carrito, setCarrito] = useState({});
   const [carritoId, setCarritoId] = useState(null);
+  const [carritoProductos, setCarritoProductos] = useState([]); // Define estas variables
+
 
   useEffect(() => {
     if (usuarioId) {
@@ -61,7 +62,6 @@ export const CarritoProvider = ({ children }) => {
   const agregarIdsCarritoProductoAlCarrito = async (usuarioId, idsCarritoProducto) => {
     try {
       const response = await axios.post(`http://localhost:8080/api/carrito/${usuarioId}/carritoProducto`, idsCarritoProducto);
-      // Actualizar los IDs de los productos del carrito en el contexto
       setCarrito(response.data);
     } catch (error) {
       console.error("Error al agregar IDs de productos al carrito:", error.response ? error.response.data : error.message);
@@ -71,7 +71,6 @@ export const CarritoProvider = ({ children }) => {
   const eliminarCarritoProductoDelCarrito = async (usuarioId, productoId) => {
     try {
       await axios.delete(`http://localhost:8080/api/carrito/${usuarioId}/carritoProducto/producto/${productoId}`);
-      // Remover el producto del carrito en el contexto
       setCarrito((prevCarrito) => ({
         ...prevCarrito,
         carritoProductoId: prevCarrito.carritoProductoId.filter((id) => id !== productoId),
@@ -89,10 +88,36 @@ export const CarritoProvider = ({ children }) => {
     } catch (error) {
       console.error("Error al cerrar sesión del carrito:", error.response ? error.response.data : error.message);
     }
+  }
+  
+  
+  const agregarProductoAlCarrito = async (productoRequest) => {
+    try {
+      if (!carritoId) {
+        throw new Error("No hay un carrito activo para agregar productos.");
+      }
+      const response = await axios.post(`http://localhost:8080/api/carritoProducto/${carritoId}/producto`, productoRequest);
+      setCarritoProductos([...carritoProductos, response.data]);
+    } catch (error) {
+      console.error("Error al agregar producto al carrito:", error.response ? error.response.data : error.message);
+    }
   };
+  
+  ;
 
   return (
-    <CarritoContext.Provider value={{ carrito, carritoId, obtenerCarrito, crearCarrito, eliminarCarrito, modificarEstadoCarrito, agregarIdsCarritoProductoAlCarrito, eliminarCarritoProductoDelCarrito, logoutCarrito }}>
+    <CarritoContext.Provider value={{
+      carrito,
+      carritoId,
+      obtenerCarrito,
+      crearCarrito,
+      eliminarCarrito,
+      modificarEstadoCarrito,
+      agregarIdsCarritoProductoAlCarrito,
+      eliminarCarritoProductoDelCarrito,
+      logoutCarrito,
+      agregarProductoAlCarrito
+    }}>
       {children}
     </CarritoContext.Provider>
   );

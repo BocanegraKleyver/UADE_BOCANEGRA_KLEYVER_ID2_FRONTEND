@@ -1,13 +1,19 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { useParams } from "react-router-dom";
 import axios from "axios";
-import { Container, Row, Col, Card, Form, Button } from "react-bootstrap";
+import { Container, Row, Col, Card, Form, Button, Alert } from "react-bootstrap";
+import { CarritoContext } from '../contexts/CarritoContext';
+import { UsuarioContext } from '../contexts/UsuarioContext';
 
 const ProductoDetalleScreen = () => {
   const { id } = useParams();
-  const [producto, setProducto] = useState({});
-  const [comentarios, setComentarios] = useState([]);  // Inicializar como un arreglo vacío
+  const [producto, setProducto] = useState(null);
+  const [comentarios, setComentarios] = useState([]);
   const [nuevoComentario, setNuevoComentario] = useState("");
+  const [cantidad, setCantidad] = useState(1);
+  const [mensaje, setMensaje] = useState(null); // Nuevo estado para el mensaje
+  const { agregarProductoAlCarrito } = useContext(CarritoContext);
+  const { usuarioId } = useContext(UsuarioContext);
 
   useEffect(() => {
     obtenerProducto();
@@ -17,7 +23,7 @@ const ProductoDetalleScreen = () => {
     try {
       const response = await axios.get(`http://localhost:8080/api/producto/${id}`);
       setProducto(response.data);
-      setComentarios(response.data.comentarios || []);  // Asegúrate de que comentarios sea un arreglo
+      setComentarios(response.data.comentarios || []);
     } catch (error) {
       console.error("Error al obtener el producto:", error.response ? error.response.data : error.message);
     }
@@ -36,8 +42,24 @@ const ProductoDetalleScreen = () => {
     }
   };
 
+  const manejarAgregarAlCarrito = () => {
+    if (usuarioId) {
+      const productoRequest = {
+        productoId: id,
+        cantidad,
+      };
+      agregarProductoAlCarrito(productoRequest);
+      setMensaje("Producto agregado al carrito correctamente"); // Actualiza el mensaje
+    }
+  };
+
+  if (!producto) {
+    return <Container><p>Cargando...</p></Container>;
+  }
+
   return (
     <Container>
+      {mensaje && <Alert variant="success">{mensaje}</Alert>} {/* Mostrar el mensaje si está presente */}
       <Row>
         <Col md={6}>
           <Card>
@@ -46,7 +68,22 @@ const ProductoDetalleScreen = () => {
               <Card.Title>{producto.nombre}</Card.Title>
               <Card.Text>{producto.descripcion}</Card.Text>
               <Card.Text>Precio: ${producto.precio}</Card.Text>
-              <Card.Text>Cantidad: {producto.cantidad}</Card.Text>
+              <Card.Text>Cantidad disponible: {producto.cantidad}</Card.Text>
+              <Form>
+                <Form.Group controlId="cantidad">
+                  <Form.Label>Cantidad:</Form.Label>
+                  <Form.Control
+                    type="number"
+                    value={cantidad}
+                    onChange={(e) => setCantidad(e.target.value)}
+                    min="1"
+                    max={producto.cantidad}
+                  />
+                </Form.Group>
+                <Button variant="primary" onClick={manejarAgregarAlCarrito}>
+                  Agregar al carrito
+                </Button>
+              </Form>
             </Card.Body>
           </Card>
         </Col>

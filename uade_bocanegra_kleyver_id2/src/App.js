@@ -1,5 +1,3 @@
-// App.js
-
 import React, { useState, useEffect } from "react";
 import {
   BrowserRouter as Router,
@@ -15,12 +13,14 @@ import ContactoScreen from "./screens/ContactoScreen";
 import CarritoScreen from "./screens/CarritoScreen";
 import CargarProductoScreen from "./screens/CargarProductoScreen";
 import ProductoDetalleScreen from "./screens/ProductoDetalleScreen";
-import PedidoScreen from "./screens/PedidoScreen"; // Importar PedidoScreen
+import PedidoScreen from "./screens/PedidoScreen";
+import PagoScreen from "./screens/PagoScreen"; // Importar la pantalla de pago
 import NavigationBar from "./components/NavigationBar";
 import { UsuarioProvider } from "./contexts/UsuarioContext";
 import { CarritoProvider } from "./contexts/CarritoContext";
 import { CarritoProductoProvider } from "./contexts/CarritoProductoContext";
-import { PedidoProvider } from "./contexts/PedidoContext"; // Importar PedidoProvider
+import { PedidoProvider } from "./contexts/PedidoContext";
+import { PagoProvider } from "./contexts/PagoContext"; // Importar PagoProvider
 
 const App = () => {
   const location = useLocation();
@@ -44,8 +44,9 @@ const App = () => {
           element={<CargarProductoScreen />}
         />
         <Route exact path="/realizar-pedido" element={<PedidoScreen />} />
-        {/* Agregar la ruta para PedidoScreen con el parámetro de ID */}
         <Route path="/pedido/:id" element={<PedidoScreen />} />
+        {/* Agregar la ruta para la página de pago */}
+        <Route path="/pagar/:id" element={<PagoScreen />} />
       </Routes>
     </div>
   );
@@ -67,8 +68,9 @@ const AppWrapper = () => {
         <CarritoProvider>
           <CarritoProductoProvider>
             <PedidoProvider>
-              {/* Agregar PedidoProvider */}
-              <App />
+              <PagoProvider>
+                <App />
+              </PagoProvider>
             </PedidoProvider>
           </CarritoProductoProvider>
         </CarritoProvider>

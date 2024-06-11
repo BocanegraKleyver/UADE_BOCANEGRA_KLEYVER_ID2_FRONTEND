@@ -91,7 +91,18 @@ const actualizarCarritoDespuesDeEliminarProducto = async (productoId) => {
 };
 
 
-
+const actualizarCantidadProductoEnCarrito = async (carritoProductoId, nuevaCantidad) => {
+  try {
+    await axios.put(`http://localhost:8080/api/carritoProducto/${carritoId}/cantidad`, {
+      carritoProductoId,
+      nuevaCantidad,
+    });
+    // Actualizar el carrito después de modificar la cantidad
+    await obtenerCarrito(usuarioId);
+  } catch (error) {
+    console.error("Error al actualizar la cantidad del producto en el carrito:", error.response ? error.response.data : error.message);
+  }
+};
 
 
 
@@ -118,6 +129,22 @@ const actualizarCarritoDespuesDeEliminarProducto = async (productoId) => {
     }
   };
   
+
+  
+  const actualizarCarrito = async () => {
+    try {
+      if (usuarioId) {
+        const response = await axios.get(`http://localhost:8080/api/carrito/${usuarioId}`);
+        setCarrito(response.data);
+        setCarritoId(response.data.id);
+        setCarritoProductos(response.data.carritoProductos);
+      }
+    } catch (error) {
+      console.error("Error al actualizar el carrito:", error.response ? error.response.data : error.message);
+    }
+  };
+
+  
   ;
 
   return (
@@ -132,7 +159,9 @@ const actualizarCarritoDespuesDeEliminarProducto = async (productoId) => {
       eliminarCarritoProductoDelCarrito,
       logoutCarrito,
       agregarProductoAlCarrito,
-      actualizarCarritoDespuesDeEliminarProducto
+      actualizarCarritoDespuesDeEliminarProducto,
+      actualizarCarrito,
+      actualizarCantidadProductoEnCarrito
     }}>
       {children}
     </CarritoContext.Provider>

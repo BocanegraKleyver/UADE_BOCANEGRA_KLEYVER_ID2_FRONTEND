@@ -1,3 +1,5 @@
+// App.js
+
 import React, { useState, useEffect } from "react";
 import {
   BrowserRouter as Router,
@@ -13,10 +15,12 @@ import ContactoScreen from "./screens/ContactoScreen";
 import CarritoScreen from "./screens/CarritoScreen";
 import CargarProductoScreen from "./screens/CargarProductoScreen";
 import ProductoDetalleScreen from "./screens/ProductoDetalleScreen";
+import PedidoScreen from "./screens/PedidoScreen"; // Importar PedidoScreen
 import NavigationBar from "./components/NavigationBar";
 import { UsuarioProvider } from "./contexts/UsuarioContext";
 import { CarritoProvider } from "./contexts/CarritoContext";
 import { CarritoProductoProvider } from "./contexts/CarritoProductoContext";
+import { PedidoProvider } from "./contexts/PedidoContext"; // Importar PedidoProvider
 
 const App = () => {
   const location = useLocation();
@@ -39,6 +43,9 @@ const App = () => {
           path="/cargar-producto"
           element={<CargarProductoScreen />}
         />
+        <Route exact path="/realizar-pedido" element={<PedidoScreen />} />
+        {/* Agregar la ruta para PedidoScreen con el parámetro de ID */}
+        <Route path="/pedido/:id" element={<PedidoScreen />} />
       </Routes>
     </div>
   );
@@ -59,7 +66,10 @@ const AppWrapper = () => {
       <UsuarioProvider value={{ usuarioId, setUsuarioId }}>
         <CarritoProvider>
           <CarritoProductoProvider>
-            <App />
+            <PedidoProvider>
+              {/* Agregar PedidoProvider */}
+              <App />
+            </PedidoProvider>
           </CarritoProductoProvider>
         </CarritoProvider>
       </UsuarioProvider>

@@ -1,13 +1,17 @@
 import React, { useContext, useEffect, useState } from 'react';
-import { Container, Row, Col, Button } from 'react-bootstrap';
+import { Container, Row, Col, Button, Alert } from 'react-bootstrap'; // Agregado Alert
 import axios from 'axios';
-import { CarritoContext } from '../contexts/CarritoContext'; // Ajusta la ruta según tu estructura de carpetas
+import { CarritoContext } from '../contexts/CarritoContext';
+import { Link } from 'react-router-dom'; // Importamos Link desde react-router-dom
+import { PedidoContext } from '../contexts/PedidoContext'; // Importamos PedidoContext
 
 const CarritoScreen = () => {
-  const { carrito } = useContext(CarritoContext); // Obtener el carrito del contexto
+  const { carrito } = useContext(CarritoContext);
+  const { crearPedido } = useContext(PedidoContext); // Importamos crearPedido
   const [carritoProductos, setCarritoProductos] = useState([]);
-  const [editando, setEditando] = useState(null); // Estado para rastrear el producto que está siendo editado
-  const [tempCantidad, setTempCantidad] = useState({}); // Estado temporal para almacenar la cantidad editada
+  const [editando, setEditando] = useState(null);
+  const [tempCantidad, setTempCantidad] = useState({});
+  const [error, setError] = useState('');
 
   useEffect(() => {
     const obtenerProductosEnCarrito = async () => {
@@ -52,21 +56,48 @@ const CarritoScreen = () => {
   };
 
 
+  // const handleConfirmar = async (productoId) => {
+  //   try {
+  //     const nuevaCantidad = tempCantidad[productoId];
+  //     const response = await axios.put(`http://localhost:8080/api/carritoProducto/${productoId}`, {
+  //       cantidad: nuevaCantidad,
+  //     });
+  //     const productoActualizado = response.data;
+
+  //     setCarritoProductos(carritoProductos.map((prod) =>
+  //       prod.id === productoId ? { ...prod, cantidad: productoActualizado.cantidad, precioCarritoDelProducto: productoActualizado.precioCarritoDelProducto } : prod
+  //     ));
+  //     setEditando(null);
+  //   } catch (error) {
+  //     console.error('Error al confirmar la cantidad del producto en el carrito:', error.response ? error.response.data : error.message);
+  //   }
+  // };
+  
   const handleConfirmar = async (productoId) => {
     try {
       const nuevaCantidad = tempCantidad[productoId];
-      await axios.put(`http://localhost:8080/api/carritoProducto/${productoId}`, {
+      const producto = carritoProductos.find((prod) => prod.id === productoId);
+
+      // Validar la cantidad con el stock disponible
+      if (nuevaCantidad > producto.stock) {
+        setError(`No hay suficiente stock para el producto. Stock disponible: ${producto.stock}`);
+        return;
+      }
+
+      const response = await axios.put(`http://localhost:8080/api/carritoProducto/${productoId}`, {
         cantidad: nuevaCantidad,
       });
+      const productoActualizado = response.data;
+
       setCarritoProductos(carritoProductos.map((prod) =>
-        prod.id === productoId ? { ...prod, cantidad: nuevaCantidad } : prod
+        prod.id === productoId ? { ...prod, cantidad: productoActualizado.cantidad, precioCarritoDelProducto: productoActualizado.precioCarritoDelProducto } : prod
       ));
       setEditando(null);
+      setError(''); // Limpiar cualquier error previo
     } catch (error) {
       console.error('Error al confirmar la cantidad del producto en el carrito:', error.response ? error.response.data : error.message);
     }
-  };
-
+  }; 
 
   const handleCancelar = (productoId) => {
     setEditando(null);
@@ -77,9 +108,26 @@ const CarritoScreen = () => {
     });
   };
 
+
+  const handleRealizarPedido = async () => {
+    try {
+      if (!carrito || !carrito.id) {
+        setError('No se puede realizar el pedido: carrito no encontrado.');
+        return;
+      }
+
+      const nuevoPedido = await crearPedido(carrito.id);
+      // Redirigir a la página de pedido
+      window.location.href = `/pedido/${nuevoPedido.id}`;
+    } catch (error) {
+      console.error('Error al realizar el pedido:', error.response ? error.response.data : error.message);
+    }
+  };
+
   return (
     <Container>
       <h1>Carrito</h1>
+      {error && <Alert variant="danger">{error}</Alert>}
       {carritoProductos.length > 0 ? (
         <div>
           <p>Estos son los productos en tu carrito:</p>
@@ -92,6 +140,7 @@ const CarritoScreen = () => {
                     <h5 className="card-title">Producto</h5>
                     <p className="card-text">Cantidad: {carritoProducto.cantidad}</p>
                     <p className="card-text">Precio: ${carritoProducto.precioCarritoDelProducto}</p>
+                    <p className="card-text">Stock: {carritoProducto.stock}</p>
                     <Button variant="danger" onClick={() => handleEliminarDelCarrito(carritoProducto.id)}>Eliminar</Button>
                     {editando === carritoProducto.id ? (
                       <div className="mt-2">
@@ -109,6 +158,10 @@ const CarritoScreen = () => {
               </Col>
             ))}
           </Row>
+          {/* Utilizamos Link para redirigir a la pantalla de realizar pedido */}
+          <Link to="/realizar-pedido">
+          <Button variant="primary" onClick={handleRealizarPedido}>Realizar Pedido</Button>
+          </Link>
         </div>
       ) : (
         <p>No hay productos en tu carrito.</p>

@@ -41,38 +41,60 @@ const ProductosScreen = () => {
     }));
   };
 
+  // const handleAgregarAlCarrito = async (producto) => {
+  //   const cantidad = cantidadSeleccionada[producto.id] || 1;
+  //   try {
+  //     if (usuarioId) {
+  //       // Agregar al carrito
+  //       const productoRequest = {
+  //         productoId: producto.id,
+  //         cantidad: cantidad
+  //       };
+  
+  //       const response = await axios.post(`http://localhost:8080/api/carritoProducto/${carritoId}/producto`, productoRequest, {
+  //         headers: {
+  //           'Content-Type': 'application/json'
+  //         }
+  //       });
+  
+  //       if (response.status === 201) {
+  //         // Si se agregó correctamente, mostrar un mensaje
+  //         alert(`¡${cantidad} ${producto.nombre} agregado(s) al carrito!`);
+  //       } else {
+  //         console.error("Error al agregar producto al carrito:", response.data);
+  //       }
+  //     } else {
+  //       console.error("Usuario no autenticado o usuarioId no disponible");
+  //       // Redirigir al usuario a la página de inicio de sesión
+  //       navigate("/login");
+  //     }
+  //   } catch (error) {
+  //     console.error("Error al agregar producto al carrito:", error.response ? error.response.data : error.message);
+  //   }
+  // };
+  
   const handleAgregarAlCarrito = async (producto) => {
     const cantidad = cantidadSeleccionada[producto.id] || 1;
     try {
       if (usuarioId) {
-        // Agregar al carrito
         const productoRequest = {
           productoId: producto.id,
           cantidad: cantidad
         };
   
-        const response = await axios.post(`http://localhost:8080/api/carritoProducto/${carritoId}/producto`, productoRequest, {
-          headers: {
-            'Content-Type': 'application/json'
-          }
-        });
+        await agregarProductoAlCarrito(productoRequest); // Usar el método del contexto
   
-        if (response.status === 201) {
-          // Si se agregó correctamente, mostrar un mensaje
-          alert(`¡${cantidad} ${producto.nombre} agregado(s) al carrito!`);
-        } else {
-          console.error("Error al agregar producto al carrito:", response.data);
-        }
+        alert(`¡${cantidad} ${producto.nombre} agregado(s) al carrito!`);
       } else {
         console.error("Usuario no autenticado o usuarioId no disponible");
-        // Redirigir al usuario a la página de inicio de sesión
         navigate("/login");
       }
     } catch (error) {
       console.error("Error al agregar producto al carrito:", error.response ? error.response.data : error.message);
     }
   };
-  
+
+
   return (
     <Container>
       <h2 className="mt-5 mb-4">Nuestros Productos</h2>

@@ -2,7 +2,6 @@ import React, { useState, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Swal from 'sweetalert2';
 import { UsuarioContext } from '../contexts/UsuarioContext';
-import { CarritoProductoContext } from '../contexts/CarritoProductoContext'; // Importa el contexto del carrito si lo necesitas
 
 const RegisterScreen = () => {
   const navigate = useNavigate();
@@ -10,9 +9,9 @@ const RegisterScreen = () => {
 
   const [user, setUser] = useState({
     nombre: '',
+    apellido: '', // Agregado campo apellido
     direccion: '',
     documentoIdentidad: '',
-    categoria: 'LOW',
     usuario: '',
     password: '',
     email: ''
@@ -57,6 +56,10 @@ const RegisterScreen = () => {
         <div className="mb-3">
           <label htmlFor="nombre" className="form-label">Nombre</label>
           <input type="text" className="form-control" id="nombre" name="nombre" value={user.nombre} onChange={handleChange} />
+        </div>
+        <div className="mb-3">
+          <label htmlFor="apellido" className="form-label">Apellido</label>
+          <input type="text" className="form-control" id="apellido" name="apellido" value={user.apellido} onChange={handleChange} />
         </div>
         <div className="mb-3">
           <label htmlFor="direccion" className="form-label">Dirección</label>

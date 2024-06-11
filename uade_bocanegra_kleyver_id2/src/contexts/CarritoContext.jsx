@@ -8,8 +8,7 @@ export const CarritoProvider = ({ children }) => {
   const { usuarioId } = useContext(UsuarioContext);
   const [carrito, setCarrito] = useState({});
   const [carritoId, setCarritoId] = useState(null);
-  const [carritoProductos, setCarritoProductos] = useState([]); // Define estas variables
-
+  const [carritoProductos, setCarritoProductos] = useState([]); // 
 
   useEffect(() => {
     if (usuarioId) {
@@ -22,6 +21,7 @@ export const CarritoProvider = ({ children }) => {
       const response = await axios.get(`http://localhost:8080/api/carrito/${usuarioId}`);
       setCarrito(response.data);
       setCarritoId(response.data.id);
+      setCarritoProductos(response.data.carritoProductos);
     } catch (error) {
       console.error("Error al obtener el carrito:", error.response ? error.response.data : error.message);
     }
@@ -68,17 +68,32 @@ export const CarritoProvider = ({ children }) => {
     }
   };
 
-  const eliminarCarritoProductoDelCarrito = async (usuarioId, productoId) => {
+
+  const eliminarCarritoProductoDelCarrito = async (productoId) => {
     try {
-      await axios.delete(`http://localhost:8080/api/carrito/${usuarioId}/carritoProducto/producto/${productoId}`);
-      setCarrito((prevCarrito) => ({
-        ...prevCarrito,
-        carritoProductoId: prevCarrito.carritoProductoId.filter((id) => id !== productoId),
-      }));
+      await axios.delete(`http://localhost:8080/api/carritoProducto/delete/{carritoProductoId}`);
+      // Volver a obtener el carrito para asegurarse de que el precio total se actualiza correctamente
+      await obtenerCarrito(usuarioId);
     } catch (error) {
       console.error("Error al eliminar producto del carrito:", error.response ? error.response.data : error.message);
     }
   };
+
+// Agrega este método para actualizar el carrito después de eliminar un producto
+const actualizarCarritoDespuesDeEliminarProducto = async (productoId) => {
+  try {
+    await axios.put(`http://localhost:8080/api/carritoProducto/${carritoId}/producto/${productoId}`);
+    // Volver a obtener el carrito para asegurarse de que los productos se actualizan correctamente
+    await obtenerCarrito(usuarioId);
+  } catch (error) {
+    console.error("Error al actualizar el carrito después de eliminar el producto:", error.response ? error.response.data : error.message);
+  }
+};
+
+
+
+
+
 
   const logoutCarrito = async (usuarioId) => {
     try {
@@ -116,7 +131,8 @@ export const CarritoProvider = ({ children }) => {
       agregarIdsCarritoProductoAlCarrito,
       eliminarCarritoProductoDelCarrito,
       logoutCarrito,
-      agregarProductoAlCarrito
+      agregarProductoAlCarrito,
+      actualizarCarritoDespuesDeEliminarProducto
     }}>
       {children}
     </CarritoContext.Provider>

@@ -2,13 +2,14 @@ import React from "react";
 import ReactDOM from "react-dom";
 import "./index.css";
 import App from "./App";
-import "bootstrap/dist/css/bootstrap.min.css"; // Importa el CSS de Bootstrap
+import "bootstrap/dist/css/bootstrap.min.css";
 import reportWebVitals from "./reportWebVitals";
-import { UsuarioProvider } from "./contexts/UsuarioContext"; // Ajusta la ruta según tu estructura de carpetas
-import { CarritoProvider } from "./contexts/CarritoContext"; // Ajusta la ruta según tu estructura de carpetas
+import { UsuarioProvider } from "./contexts/UsuarioContext";
+import { CarritoProvider } from "./contexts/CarritoContext";
 import { CarritoProductoProvider } from "./contexts/CarritoProductoContext";
 import { PagoProvider } from "./contexts/PagoContext";
-import { FacturaProvider } from "./contexts/FacturaContext"; // Importa el proveedor de FacturaContext
+import { FacturaProvider } from "./contexts/FacturaContext";
+import { ProductoProvider } from "./contexts/ProductoContext"; // Agregar ProductoProvider
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
@@ -18,9 +19,11 @@ root.render(
         <CarritoProductoProvider>
           <PagoProvider>
             <FacturaProvider>
-              {" "}
-              {/* Agrega el proveedor de FacturaContext */}
-              <App />
+              <ProductoProvider>
+                {" "}
+                {/* Agregar ProductoProvider */}
+                <App />
+              </ProductoProvider>
             </FacturaProvider>
           </PagoProvider>
         </CarritoProductoProvider>
@@ -28,7 +31,5 @@ root.render(
     </UsuarioProvider>
   </React.StrictMode>
 );
-// Si quieres empezar a medir el rendimiento de tu aplicación, pasa una función
-// para registrar resultados (por ejemplo: reportWebVitals(console.log))
-// o envía a un punto de análisis. Aprende más: https://bit.ly/CRA-vitals
+
 reportWebVitals();

@@ -1,18 +1,88 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import Swal from 'sweetalert2';
+// import React, { useContext, useState } from 'react';
+// import { ProductoContext } from '../contexts/ProductoContext';
 
-const CargarProductoScreen = () => {
-  const navigate = useNavigate();
+// const PagoScreen = () => {
+//   const { productos, saveProducto } = useContext(ProductoContext);
+//   const [nombre, setNombre] = useState('');
+//   const [precio, setPrecio] = useState(0);
+//   const [descuento, setDescuento] = useState(0);
 
+//   const handleGuardarProducto = async () => {
+//     try {
+//       // Aquí puedes validar los campos antes de enviar la solicitud
+//       const nuevoProducto = {
+//         nombre: nombre,
+//         precio: precio,
+//         descuento: descuento
+//       };
+
+//       await saveProducto(nuevoProducto);
+//       // Si llegamos aquí, el producto se ha guardado correctamente
+//       // Puedes mostrar un mensaje de éxito o redirigir a otra pantalla
+//       console.log('Producto guardado correctamente:', nuevoProducto);
+//     } catch (error) {
+//       // Manejo de errores si falla la carga del producto
+//       console.error('Error al guardar el producto:', error.message);
+//       // Puedes mostrar un mensaje de error al usuario
+//     }
+//   };
+
+//   return (
+//     <div>
+//       <h2>Carga de Productos</h2>
+//       <form>
+//         <div>
+//           <label>Nombre:</label>
+//           <input
+//             type="text"
+//             value={nombre}
+//             onChange={(e) => setNombre(e.target.value)}
+//           />
+//         </div>
+//         <div>
+//           <label>Precio:</label>
+//           <input
+//             type="number"
+//             value={precio}
+//             onChange={(e) => setPrecio(Number(e.target.value))}
+//           />
+//         </div>
+//         <div>
+//           <label>Descuento:</label>
+//           <input
+//             type="number"
+//             value={descuento}
+//             onChange={(e) => setDescuento(Number(e.target.value))}
+//           />
+//         </div>
+//         <button type="button" onClick={handleGuardarProducto}>
+//           Guardar Producto
+//         </button>
+//       </form>
+//     </div>
+//   );
+// };
+
+// export default PagoScreen;
+
+
+import React, { useContext, useState } from 'react';
+import { ProductoContext } from '../contexts/ProductoContext';
+
+const CargarProducto = () => {
+  const { saveProducto } = useContext(ProductoContext);
   const [producto, setProducto] = useState({
     nombre: '',
     descripcion: '',
     precio: 0,
-    cantidad: 1,
+    precioAnterior: 0,
+    cantidad: 0,
     imagen: '',
-    comentario: '', // Cambiado de comentarios a comentario
-    video: ''
+    video: '',
+    comentarios: [],
+    descuento: 0,
+    fechaCarga: new Date(),
+    fechaModificacion: new Date()
   });
 
   const handleChange = (e) => {
@@ -20,154 +90,100 @@ const CargarProductoScreen = () => {
     setProducto({ ...producto, [name]: value });
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-
-    // Validar que todos los campos estén llenos
-    for (const key in producto) {
-      if (producto[key] === '' && key !== 'video' && key !== 'comentario') {
-        alert(`El campo ${key} es requerido`);
-        return;
-      }
-    }
-
-    // Validar la URL de la imagen
-    if (!validateURL(producto.imagen)) {
-      alert('La URL de la imagen no es válida');
-      return;
-    }
-
+  const handleGuardarProducto = async () => {
     try {
-      const response = await fetch('http://localhost:8080/api/producto', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(producto)
-      });
-
-      if (!response.ok) {
-        throw new Error('Error al cargar el producto');
-      }
-
-      // Limpiar el formulario después de enviar los datos
-      setProducto({
-        nombre: '',
-        descripcion: '',
-        precio: 0,
-        cantidad: 1,
-        imagen: '',
-        comentario: '', // Cambiado de comentarios a comentario
-        video: ''
-      });
-
-      Swal.fire({
-        icon: 'success',
-        title: '¡Producto cargado exitosamente!',
-      });
+      await saveProducto(producto);
+      // Producto guardado correctamente
+      console.log('Producto guardado correctamente:', producto);
     } catch (error) {
-      console.error('Error:', error.message);
-      alert('Hubo un error al cargar el producto');
+      // Manejo de errores si falla la carga del producto
+      console.error('Error al guardar el producto:', error.message);
     }
-  };
-
-  // Función para validar la URL de la imagen
-  const validateURL = (url) => {
-    // Regex para validar una URL
-    const urlRegex = /^(ftp|http|https):\/\/[^ "]+$/;
-    return urlRegex.test(url);
   };
 
   return (
-    <div className="container mt-5">
-      <h2 className="mb-4">Cargar Producto</h2>
-      <form onSubmit={handleSubmit}>
-        <div className="mb-3">
-          <label htmlFor="nombre" className="form-label">Nombre del producto:</label>
+    <div>
+      <h2>Cargar Producto</h2>
+      <form>
+        <div>
+          <label>Nombre:</label>
           <input
             type="text"
-            className="form-control"
-            id="nombre"
             name="nombre"
             value={producto.nombre}
             onChange={handleChange}
-            required
           />
         </div>
-        <div className="mb-3">
-          <label htmlFor="descripcion" className="form-label">Descripción:</label>
+        <div>
+          <label>Descripción:</label>
           <textarea
-            className="form-control"
-            id="descripcion"
             name="descripcion"
             value={producto.descripcion}
             onChange={handleChange}
-            required
           />
         </div>
-        <div className="row">
-          <div className="col-md-6 mb-3">
-            <label htmlFor="precio" className="form-label">Precio:</label>
-            <input
-              type="number"
-              className="form-control"
-              id="precio"
-              name="precio"
-              value={producto.precio}
-              onChange={handleChange}
-              required
-            />
-          </div>
-          <div className="col-md-6 mb-3">
-          <label htmlFor="cantidad" className="form-label">Cantidad:</label>
+        <div>
+          <label>Precio:</label>
           <input
-            type="text"
-            className="form-control"
-            id="cantidad"
+            type="number"
+            name="precio"
+            value={producto.precio}
+            onChange={handleChange}
+          />
+        </div>
+        <div>
+          <label>Cantidad:</label>
+          <input
+            type="number"
             name="cantidad"
             value={producto.cantidad}
             onChange={handleChange}
-            required
           />
         </div>
-          <div className="col-md-6 mb-3">
-            <label htmlFor="video" className="form-label">URL del video (opcional):</label>
-            <input
-              type="text"
-              className="form-control"
-              id="video"
-              name="video"
-              value={producto.video}
-              onChange={handleChange}
-            />
-          </div>
-        </div>
-        <div className="mb-3">
-          <label htmlFor="comentario" className="form-label">Comentario:</label>
-          <textarea
-            className="form-control"
-            id="comentario"
-            name="comentario"
-            value={producto.comentario}
-            onChange={handleChange}
-          />
-        </div>
-        <div className="mb-3">
-          <label htmlFor="imagen" className="form-label">URL de la imagen:</label>
+        <div>
+          <label>Imagen:</label>
           <input
             type="text"
-            className="form-control"
-            id="imagen"
             name="imagen"
             value={producto.imagen}
             onChange={handleChange}
-            required
           />
         </div>
-        <button type="submit" className="btn btn-primary">Cargar Producto</button>
+        <div>
+          <label>Video:</label>
+          <input
+            type="text"
+            name="video"
+            value={producto.video}
+            onChange={handleChange}
+          />
+        </div>
+
+        <div>
+          <label>Comentarios:</label>
+          <input
+            type="text"
+            name="video"
+            value={producto.video}
+            onChange={handleChange}
+          />
+        </div>
+
+        <div>
+          <label>Descuento:</label>
+          <input
+            type="number"
+            name="descuento"
+            value={producto.descuento}
+            onChange={handleChange}
+          />
+        </div>
+        <button type="button" onClick={handleGuardarProducto}>
+          Cargar Producto
+        </button>
       </form>
     </div>
   );
 };
 
-export default CargarProductoScreen;
+export default CargarProducto;

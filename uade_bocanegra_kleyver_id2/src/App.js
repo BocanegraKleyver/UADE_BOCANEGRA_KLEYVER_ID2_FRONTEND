@@ -46,7 +46,7 @@ const App = () => {
         <Route exact path="/realizar-pedido" element={<PedidoScreen />} />
         <Route path="/pedido/:id" element={<PedidoScreen />} />
         {/* Agregar la ruta para la página de pago */}
-        <Route path="/pagar/:id" element={<PagoScreen />} />
+        <Route path="/pago/:id" element={<PagoScreen />} />
       </Routes>
     </div>
   );

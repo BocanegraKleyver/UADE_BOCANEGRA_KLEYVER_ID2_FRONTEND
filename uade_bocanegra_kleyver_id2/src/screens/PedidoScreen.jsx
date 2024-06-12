@@ -1,15 +1,16 @@
 import React, { useContext, useState, useEffect } from 'react';
 import { Container, Button } from 'react-bootstrap';
 import { PedidoContext } from '../contexts/PedidoContext'; // Ajusta la ruta según tu estructura de carpetas
-import { Link, useParams } from 'react-router-dom';
+import { Link, useParams, useHistory } from 'react-router-dom'; // Importa useHistory
 import { PagoContext } from '../contexts/PagoContext'; // Importa el contexto de pago
+import axios from 'axios';
 
-const PedidoScreen = () => {
-  const { id } = useParams(); // Obtener el ID del pedido de los parámetros de la URL
-  const { obtenerPedidoPorId, actualizarPedido, eliminarPedido } = useContext(PedidoContext); // Obtener funciones del contexto
-  const [pedido, setPedido] = useState(null); // Estado para almacenar la información del pedido
-  const { crearPago } = useContext(PagoContext); // Obtener la función para crear un pago del contexto de pago
-  const [error, setError] = useState(null); // Estado para manejar errores
+const PedidoScreen = ({ history }) => { // Pasamos history como prop
+  const { id } = useParams();
+  const { obtenerPedidoPorId, actualizarPedido, eliminarPedido } = useContext(PedidoContext);
+  const [pedido, setPedido] = useState(null);
+  const { crearPago } = useContext(PagoContext);
+  const [error, setError] = useState(null);
   
 
   useEffect(() => {
@@ -49,6 +50,36 @@ const PedidoScreen = () => {
     }
   };
 
+  // const handleIrAPagar = async () => {
+  //   try {
+  //     if (!pedido || !pedido.id) {
+  //       setError('No se puede realizar el pago: pedido no encontrado.');
+  //       return;
+  //     }
+  
+  //     const nuevoPago = {
+  //       usuarioId: pedido.usuarioId, 
+  //       pedidoId: pedido.id,
+  //       fecha: new Date().toISOString(),
+  //       importeTotal: pedido.importe,
+  //       metodoPago: "", 
+  //       estadoPago: pedido.estado,
+  //       numeroTransaccion: "",
+  //       metodoEnvio: "", 
+  //       informacionContacto: pedido.usuarioId.email, 
+  //       notasCliente: "" 
+  //     };
+  
+  //     // Creamos el pago y obtenemos el nuevo ID
+  //     const response = await axios.post('http://localhost:8080/api/pago', nuevoPago);
+  //     const nuevoPagoId = response.data.id;
+  
+  //     // Redireccionamos a la página de pago usando el nuevo ID del pago
+  //     window.location.href = `/pago/${nuevoPagoId}`;
+  //   } catch (error) {
+  //     setError(error.response ? error.response.data : error.message); 
+  //   }
+  // };
 
   const handleIrAPagar = async () => {
     try {
@@ -58,27 +89,32 @@ const PedidoScreen = () => {
       }
   
       const nuevoPago = {
-        usuarioId: "20dc388e-1e13-4c19-b57b-abee8a555190", 
+        usuarioId: pedido.usuarioId, 
         pedidoId: pedido.id,
         fecha: new Date().toISOString(),
         importeTotal: pedido.importe,
-        metodoPago: "", // Aquí debes definir el método de pago
-        estadoPago: "pendiente",
+        metodoPago: "", 
+        estadoPago: pedido.estado,
         numeroTransaccion: "",
-        metodoEnvio: "", // Aquí debes definir el método de envío
-        informacionContacto: "", // Aquí debes definir la información de contacto
-        notasCliente: "" // Aquí debes definir las notas del cliente
+        metodoEnvio: "", 
+        informacionContacto: pedido.usuarioId.email, 
+        notasCliente: "" 
       };
   
-      await crearPago(nuevoPago);
-      // Cambia la redirección a la página de pago usando la ID del pedido
-      window.location.href = `/pagar/${pedido.id}`; // Redirige a la página de pago con la ID del pedido
+      const response = await axios.post('http://localhost:8080/api/pago/crear/', nuevoPago);
+      const nuevoPagoId = response.data.id;
+  
+      // Redireccionamos a la página de pago usando Link
+      // Utilizamos el nuevoPagoId como ID del pago para redirigir a la página de pago
+      // Asegúrate de importar Link de react-router-dom
+      // return <Link to={`/pago/${nuevoPagoId}`}>Ir a pagar</Link>;
+
+      // Redirigir manualmente con window.location.href
+      window.location.href = `/pago/${nuevoPagoId}`;
     } catch (error) {
-      setError(error.response ? error.response.data : error.message); // Establecer el error en el estado
+      setError(error.response ? error.response.data : error.message); 
     }
   };
-
-
 
   // Función para formatear la fecha
   const formatDate = (dateString) => {
@@ -118,4 +154,4 @@ const PedidoScreen = () => {
   );
 };
 
-export default PedidoScreen;
+export default PedidoScreen; // Agregamos withRouter aquí para tener acceso a history

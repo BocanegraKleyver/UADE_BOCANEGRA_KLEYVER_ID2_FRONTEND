@@ -21,3 +21,4 @@ Legajo: 1116590
 19: CarritoScreen Maneja la logica del carrito producto, falta implemntar el boton Pasar a pago.
 20: Anda el pedido, ahora vamos a pagar.
 21: Realizo pagar, falta facturar y confirmar la compra realizada.
+22: Pago por frontend completado falta realizar compra.

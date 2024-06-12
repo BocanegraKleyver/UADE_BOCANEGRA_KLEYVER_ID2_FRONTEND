@@ -34,7 +34,7 @@ export const PagoProvider = ({ children }) => {
 
   const crearPago = async (nuevoPago) => {
     try {
-      const response = await axios.post('http://localhost:8080/api/pago', nuevoPago);
+      const response = await axios.post('http://localhost:8080/api/pago/crear/', nuevoPago);
       setPagos([...pagos, response.data]);
     } catch (error) {
       console.error("Error al crear el pago:", error.response ? error.response.data : error.message);

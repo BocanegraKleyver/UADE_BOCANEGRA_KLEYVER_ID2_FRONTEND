@@ -42,6 +42,10 @@ const NavigationBar = () => {
             <Nav.Link as={Link} to="/productos">Productos</Nav.Link>
             <Nav.Link as={Link} to="/contacto">Contacto</Nav.Link>
             <Nav.Link as={Link} to="/carrito">Carrito</Nav.Link>
+            {/* Mostrar el enlace solo si el usuario es administrador */}
+            {usuario && usuario.usuario.role === 'admin' && (
+              <Nav.Link as={Link} to="/cargar-producto">Cargar Producto</Nav.Link>
+            )}
             {usuarioId && (
               <>
                 <Nav.Item className="text-light ml-3">ID de Usuario: {usuarioId}</Nav.Item>

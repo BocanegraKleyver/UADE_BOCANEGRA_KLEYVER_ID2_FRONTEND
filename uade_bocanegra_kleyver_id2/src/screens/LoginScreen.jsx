@@ -26,7 +26,7 @@ const LoginScreen = () => {
       if (!credentials.usuario || !credentials.password) {
         throw new Error('Por favor, ingresa el usuario y la contraseña');
       }
-  
+   
       // Utilizamos el método login del contexto de usuario
       await login(credentials);
       Swal.fire({

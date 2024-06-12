@@ -22,3 +22,4 @@ Legajo: 1116590
 20: Anda el pedido, ahora vamos a pagar.
 21: Realizo pagar, falta facturar y confirmar la compra realizada.
 22: Pago por frontend completado falta realizar compra.
+23: Impacta la factura, para realizar compra.

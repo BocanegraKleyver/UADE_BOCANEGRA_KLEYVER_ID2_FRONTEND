@@ -104,12 +104,6 @@ const PedidoScreen = ({ history }) => { // Pasamos history como prop
       const response = await axios.post('http://localhost:8080/api/pago/crear/', nuevoPago);
       const nuevoPagoId = response.data.id;
   
-      // Redireccionamos a la página de pago usando Link
-      // Utilizamos el nuevoPagoId como ID del pago para redirigir a la página de pago
-      // Asegúrate de importar Link de react-router-dom
-      // return <Link to={`/pago/${nuevoPagoId}`}>Ir a pagar</Link>;
-
-      // Redirigir manualmente con window.location.href
       window.location.href = `/pago/${nuevoPagoId}`;
     } catch (error) {
       setError(error.response ? error.response.data : error.message); 

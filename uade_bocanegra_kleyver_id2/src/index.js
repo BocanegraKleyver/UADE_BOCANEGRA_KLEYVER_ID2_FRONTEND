@@ -8,6 +8,7 @@ import { UsuarioProvider } from "./contexts/UsuarioContext"; // Ajusta la ruta s
 import { CarritoProvider } from "./contexts/CarritoContext"; // Ajusta la ruta según tu estructura de carpetas
 import { CarritoProductoProvider } from "./contexts/CarritoProductoContext";
 import { PagoProvider } from "./contexts/PagoContext";
+import { FacturaProvider } from "./contexts/FacturaContext"; // Importa el proveedor de FacturaContext
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
@@ -16,7 +17,11 @@ root.render(
       <CarritoProvider>
         <CarritoProductoProvider>
           <PagoProvider>
-            <App />
+            <FacturaProvider>
+              {" "}
+              {/* Agrega el proveedor de FacturaContext */}
+              <App />
+            </FacturaProvider>
           </PagoProvider>
         </CarritoProductoProvider>
       </CarritoProvider>

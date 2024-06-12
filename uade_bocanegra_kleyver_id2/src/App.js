@@ -14,13 +14,15 @@ import CarritoScreen from "./screens/CarritoScreen";
 import CargarProductoScreen from "./screens/CargarProductoScreen";
 import ProductoDetalleScreen from "./screens/ProductoDetalleScreen";
 import PedidoScreen from "./screens/PedidoScreen";
-import PagoScreen from "./screens/PagoScreen"; // Importar la pantalla de pago
+import PagoScreen from "./screens/PagoScreen";
+import FacturaScreen from "./screens/FacturaScreen"; // Importar FacturaScreen
 import NavigationBar from "./components/NavigationBar";
 import { UsuarioProvider } from "./contexts/UsuarioContext";
 import { CarritoProvider } from "./contexts/CarritoContext";
 import { CarritoProductoProvider } from "./contexts/CarritoProductoContext";
 import { PedidoProvider } from "./contexts/PedidoContext";
-import { PagoProvider } from "./contexts/PagoContext"; // Importar PagoProvider
+import { PagoProvider } from "./contexts/PagoContext";
+import { FacturaProvider } from "./contexts/FacturaContext";
 
 const App = () => {
   const location = useLocation();
@@ -45,8 +47,9 @@ const App = () => {
         />
         <Route exact path="/realizar-pedido" element={<PedidoScreen />} />
         <Route path="/pedido/:id" element={<PedidoScreen />} />
-        {/* Agregar la ruta para la página de pago */}
         <Route path="/pago/:id" element={<PagoScreen />} />
+        <Route path="/factura/:id" element={<FacturaScreen />} />{" "}
+        {/* Agregar la ruta para la página de factura */}
       </Routes>
     </div>
   );
@@ -69,7 +72,9 @@ const AppWrapper = () => {
           <CarritoProductoProvider>
             <PedidoProvider>
               <PagoProvider>
-                <App />
+                <FacturaProvider>
+                  <App />
+                </FacturaProvider>
               </PagoProvider>
             </PedidoProvider>
           </CarritoProductoProvider>

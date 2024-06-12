@@ -2,11 +2,14 @@ import React, { useEffect, useState } from 'react';
 import { Container, Row, Col, Button, Alert, Form } from 'react-bootstrap';
 import axios from 'axios';
 import { useParams } from 'react-router-dom';
+import FacturaScreen from './FacturaScreen'; // Importa el componente FacturaScreen
+
 
 const PagoScreen = () => {
   const { id } = useParams();
   const [pago, setPago] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null); // Añadido el estado error
   const [datosTarjeta, setDatosTarjeta] = useState({
     tipo: '',
     numero: '',
@@ -18,15 +21,95 @@ const PagoScreen = () => {
   const [aliasTransferencia, setAliasTransferencia] = useState('');
   const [email, setEmail] = useState('');
 
+////
+useEffect(() => {
+  const fetchPago = async () => {
+    try {
+      const pagoObtenido = await obtenerPagoPorId(id);
+      setPago(pagoObtenido);
+      setEmail(pagoObtenido.informacionContacto || "");
+      setLoading(false);
+    } catch (error) {
+      console.error('Error al obtener el Pago:', error.response ? error.response.data : error.message);
+      setLoading(false);
+    }
+  };
+  fetchPago();
+}, [id]);
 
 
-  // Obtener pago por ID
   const obtenerPagoPorId = async (id) => {
     try {
       const response = await axios.get(`http://localhost:8080/api/pago/${id}`);
       return response.data;
     } catch (error) {
       throw error;
+    }
+  };
+
+  const handleRealizarCompra = async () => {
+    try {
+      if (!pago || !pago.id) {
+        setError('No se puede realizar el pago: pago no encontrado.');
+        return;
+      }
+  
+      const nuevaFactura = {
+        usuarioId: pago.usuarioId,
+        pagoId: pago.id, // Asegúrate de usar el ID correcto del pago
+        pedidoId: pago.pedidoId,
+        fechaFactura: new Date().toISOString(),
+        importeTotal: pago.importeTotal,
+        metodoPago: pago.metodoPago,
+        numeroTransaccion: 1, // Esto podría necesitar una lógica para generar un número de transacción real
+        metodoEnvio: pago.metodoEnvio,
+        informacionContacto: pago.informacionContacto,
+        notasCliente: "", // Esto puede llenarse con cualquier nota relevante del cliente
+        costoEnvio: 500,
+        impuestos: 300,
+        descuentos: 100,
+        nombreUsuario: pago.nombreUsuario,
+        apellidoUsuario: pago.apellidoUsuario,
+        direccionUsuario: pago.direccionUsuario,
+        documentoIdentidadUsuario: pago.documentoIdentidadUsuario,
+        emailUsuario: pago.emailUsuario,
+        numeroFactura: 12121212, // Asegúrate de que este número sea generado o único
+        serieFactura: 12121212, // Asegúrate de que esta serie sea generada o única
+        estadoFactura: "Completada",
+        nombreVendedor: "KleyStore",
+        direccionVendedor: "UADE - Lima 789",
+        identificacionFiscalVendedor: "", // Agrega la identificación fiscal del vendedor si es necesario
+        condicionesPago: pago.metodoPago,
+        notasAdicionales: "", // Agrega cualquier nota adicional relevante
+      };
+  
+      const response = await axios.post('http://localhost:8080/api/factura', nuevaFactura);
+      const nuevaFacturaId = response.data.id;
+      window.location.href = `/factura/${nuevaFacturaId}`;
+    } catch (error) {
+      setError(error.response ? error.response.data : error.message); 
+    }
+  };
+
+  // Eliminar factura
+  const eliminarFactura = async (id) => {
+    try {
+      await axios.delete(`http://localhost:8080/api/factura/delete/${id}`);
+      console.log('Factura eliminada:', id);
+    } catch (error) {
+      console.error("Error al eliminar la factura:", error.response ? error.response.data : error.message);
+    }
+  };
+
+
+  // Manejador para cancelar la compra
+  const handleCancelarCompra = async () => {
+    if (pago) {
+      // Eliminar factura asociada al pago
+      await eliminarFactura(pago.id);
+
+      // Implementa cualquier otra lógica necesaria al cancelar la compra
+      alert('Compra cancelada.');
     }
   };
 
@@ -96,15 +179,7 @@ const PagoScreen = () => {
     }
   };
 
-  const handleRealizarCompra = () => {
-    if (pago.metodoPago === 'Tarjeta de crédito') {
-      alert('Verificando tarjeta de crédito...');
-    } else if (pago.metodoPago === 'Transferencia') {
-      alert(`Cuando verifiquemos la transferencia se activará el pedido para retirar o por envío. (ID de Pago: ${pago.id})`);
-    } else {
-      alert('Pedido activado para retirar o por envío.');
-    }
-  };
+
 
   const handleEmailChange = (event) => {
     setEmail(event.target.value);
@@ -237,13 +312,11 @@ const PagoScreen = () => {
     onChange={handleNotasClienteChange}
   />
 </Form.Group>
-
-                <Button
-                  onClick={handleRealizarCompra}
-                  disabled={!pago.metodoPago || !pago.metodoEnvio || !email}
-                >
-                  Realizar Compra
-                </Button>
+                <Button variant="primary" onClick={handleRealizarCompra}>Realizar Compra</Button>{' '}
+          
+              <Button onClick={handleCancelarCompra} variant="danger">
+                Cancelar Compra
+              </Button>
               </Form>
             </div>
           ) : (

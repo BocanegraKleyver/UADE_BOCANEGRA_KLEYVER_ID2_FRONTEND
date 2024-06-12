@@ -15,17 +15,17 @@ const NavigationBar = () => {
   console.log("ID del usuario en NavigationBar:", usuarioId);
 
   const handleLogout = () => {
-    logout();
-    logoutCarrito(usuarioId);
-
+    logout(usuarioId); // Llamamos a logout con el usuarioId
+    logoutCarrito(usuarioId); // Cerramos el carrito del usuario
+  
     Swal.fire({
       icon: 'success',
       title: 'Sesión cerrada correctamente',
       showConfirmButton: false,
       timer: 1500
     });
-
-    navigate('/login');
+  
+    navigate('/');
   };
 
   // Verificar si estamos en la página de inicio de sesión o registro para ocultar el enlace de "Cerrar Sesión"

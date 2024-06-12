@@ -23,16 +23,15 @@ export const UsuarioProvider = ({ children }) => {
       const userData = response.data;
       console.log("Datos del usuario al iniciar sesión:", userData);
       setUsuario(userData);
-      setUsuarioId(userData.id);
+      setUsuarioId(userData.usuario.id); // Asegúrate de que el ID del usuario esté disponible en userData
       localStorage.setItem('user', JSON.stringify(userData));
     } catch (error) {
       console.error("Error al iniciar sesión:", error.response ? error.response.data : error.message);
       throw error;
     }
   };
-
-  const logout = async () => {
-    if (usuario) {
+  const logout = async () => { 
+    if (usuarioId) { 
       try {
         await axios.post('http://localhost:8080/api/usuario/logout', { id: usuarioId });
         console.log(`Usuario con ID: ${usuarioId} ha cerrado su sesión`);

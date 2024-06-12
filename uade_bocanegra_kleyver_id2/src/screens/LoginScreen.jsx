@@ -29,26 +29,32 @@ const LoginScreen = () => {
   
       // Utilizamos el método login del contexto de usuario
       await login(credentials);
-  
-      // Mostrar mensaje de éxito
       Swal.fire({
         icon: 'success',
         title: 'Inicio de sesión exitoso',
         showConfirmButton: false,
         timer: 1500
       });
-  
-      // Redirigir al HomeScreen después de iniciar sesión correctamente
+
       navigate('/home');
   
     } catch (error) {
       console.error('Error:', error.message);
-      // Mostrar mensaje de error
-      Swal.fire({
-        icon: 'error',
-        title: 'Error',
-        text: error.message,
-      });
+      
+      // Verificamos si el error es por credenciales incorrectas
+      if (error.response && error.response.status === 401) {
+        Swal.fire({
+          icon: 'error',
+          title: 'Error',
+          text: 'Usuario o contraseña incorrecta, o el usuario no se encuentra registrado. Por favor, verifique.',
+        });
+      } else {
+        Swal.fire({
+          icon: 'error',
+          title: 'Error',
+          text: error.message,
+        });
+      }
     }
   };
   

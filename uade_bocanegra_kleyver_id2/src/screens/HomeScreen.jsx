@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useContext } from "react";
 import { Link } from "react-router-dom";
-import { Container, Row, Col, Card, Button } from "react-bootstrap";
+import { Container, Row, Col, Card, Button, Carousel } from "react-bootstrap";
 import axios from "axios";
 import { UsuarioContext } from '../contexts/UsuarioContext';
 import { CarritoContext } from '../contexts/CarritoContext';
@@ -39,6 +39,24 @@ const HomeScreen = () => {
 
   return (
     <Container>
+      <Carousel>
+        {/* Agregar imágenes promocionales */}
+        <Carousel.Item>
+          <img
+            className="d-block w-100"
+            src="https://via.placeholder.com/1200x400?text=Imagen+promocional+1"
+            alt="First slide"
+          />
+        </Carousel.Item>
+        <Carousel.Item>
+          <img
+            className="d-block w-100"
+            src="https://via.placeholder.com/1200x400?text=Imagen+promocional+2"
+            alt="Second slide"
+          />
+        </Carousel.Item>
+      </Carousel>
+
       <div className="text-center mt-5">
         <h1>¡Descubre la comodidad perfecta con KleyStore!</h1>
         <p>Explora nuestra amplia selección de sillas diseñadas para ti</p>
@@ -67,6 +85,9 @@ const HomeScreen = () => {
           ))}
         </Row>
       </div>
+
+      {/* Agregar más secciones, como categorías, testimonios, etc. */}
+
     </Container>
   );
 };

@@ -6,7 +6,8 @@ export const CarritoContext = createContext();
 
 export const CarritoProvider = ({ children }) => {
   const { usuarioId } = useContext(UsuarioContext);
-  const [carrito, setCarrito] = useState({});
+  const [carrito, setCarrito] = useState(null);
+  // const [carrito, setCarrito] = useState({});
   const [carritoId, setCarritoId] = useState(null);
   const [carritoProductos, setCarritoProductos] = useState([]); // 
 
@@ -151,6 +152,7 @@ const actualizarCantidadProductoEnCarrito = async (carritoProductoId, nuevaCanti
     <CarritoContext.Provider value={{
       carrito,
       carritoId,
+      setCarritoId,
       obtenerCarrito,
       crearCarrito,
       eliminarCarrito,

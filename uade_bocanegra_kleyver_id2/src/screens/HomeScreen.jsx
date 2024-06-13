@@ -42,19 +42,21 @@ const HomeScreen = () => {
       <Carousel>
         {/* Agregar imágenes promocionales */}
         <Carousel.Item>
-          <img
-            className="d-block w-100"
-            src="https://via.placeholder.com/1200x400?text=Imagen+promocional+1"
-            alt="First slide"
-          />
-        </Carousel.Item>
-        <Carousel.Item>
-          <img
-            className="d-block w-100"
-            src="https://via.placeholder.com/1200x400?text=Imagen+promocional+2"
-            alt="Second slide"
-          />
-        </Carousel.Item>
+  <img
+    className="d-block w-100"
+    style={{ maxWidth: "50%", margin: "auto" }}
+    src="https://timelinecovers.pro/facebook-cover/download/anime-dragon-ball-z-shenron-facebook-cover.jpg"
+    alt="First slide"
+  />
+</Carousel.Item>
+<Carousel.Item>
+  <img
+    className="d-block w-100"
+    style={{ maxWidth: "50%", margin: "auto" }}
+    src="https://fontmeme.com/temporary/8b8f424ba330ed0bdf173e1d0379545f.png"
+    alt="First slide"
+  />
+</Carousel.Item>
       </Carousel>
 
       <div className="text-center mt-5">

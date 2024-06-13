@@ -1,29 +1,34 @@
-import React, { useState, useEffect, useContext } from "react";
-import axios from "axios";
-import { FacturaContext } from "../contexts/FacturaContext"; // Asegúrate de que la ruta sea correcta
+import React, { useContext, useEffect } from "react";
+import { Container, Alert } from "react-bootstrap";
+import { FacturaContext } from "../contexts/FacturaContext";
+import CrearFacturaForm from "../components/CrearFacturaForm"; // Cambia el import al nuevo componente
 
 const FacturaScreen = () => {
-  const { facturas, obtenerTodasLasFacturas } = useContext(FacturaContext);
-  const [loading, setLoading] = useState(true);
+  const { facturas, obtenerTodasLasFacturas, loading } = useContext(FacturaContext);
 
   useEffect(() => {
+    // Llama a la función para obtener las facturas cuando el componente se monta
     obtenerTodasLasFacturas();
-    setLoading(false);
-  }, [obtenerTodasLasFacturas]); // Agrega obtenerTodasLasFacturas como dependencia
+  }, []); // Asegúrate de pasar un arreglo vacío como segundo parámetro para que se ejecute solo una vez
 
   return (
-    <div>
-      <h1>Facturas</h1>
+    <Container>
+      <h2>Facturas</h2>
+      <p>Tienes {facturas.length} factura(s).</p>
+      {/* Renderizamos el componente CrearFacturaForm */}
+      <CrearFacturaForm /> {/* No es necesario pasar ninguna función aquí */}
       {loading ? (
         <p>Cargando...</p>
       ) : (
         <ul>
           {facturas.map((factura) => (
-            <li key={factura.id}>{factura.nombre}</li> // Aquí muestra los datos de la factura según tu estructura
+            <li key={factura.id}>
+              ID: {factura.id} - Importe Total: ${factura.importeTotal} - Fecha: {factura.fechaFactura}
+            </li>
           ))}
         </ul>
       )}
-    </div>
+    </Container>
   );
 };
 

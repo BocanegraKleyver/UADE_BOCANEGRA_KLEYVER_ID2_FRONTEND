@@ -48,6 +48,8 @@ const ProductosScreen = () => {
       if (usuario && (usuario.usuario.role === 'admin' || usuario.usuario.role === 'user')) {
         const productoRequest = {
           productoId: producto.id,
+          nombre: producto.nombre, // Agregar el nombre del producto
+          imagen: producto.imagen, // Agregar la imagen del producto
           cantidad: cantidad
         };
   
@@ -63,10 +65,13 @@ const ProductosScreen = () => {
     }
   }
 
+
   const filtrarProductos = (producto) => {
+    const nombre = producto.nombre || "";
+    const descripcion = producto.descripcion || "";
     return (
-      producto.nombre.toLowerCase().includes(busqueda.toLowerCase()) ||
-      producto.descripcion.toLowerCase().includes(busqueda.toLowerCase())
+      nombre.toLowerCase().includes(busqueda.toLowerCase()) ||
+      descripcion.toLowerCase().includes(busqueda.toLowerCase())
     );
   };
 

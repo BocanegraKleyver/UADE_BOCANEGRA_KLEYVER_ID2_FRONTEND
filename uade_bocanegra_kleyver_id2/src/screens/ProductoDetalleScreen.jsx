@@ -1,9 +1,9 @@
 import React, { useState, useEffect, useContext } from "react";
-import { useParams } from "react-router-dom";
 import axios from "axios";
 import { Container, Row, Col, Card, Form, Button, Alert } from "react-bootstrap";
 import { CarritoContext } from '../contexts/CarritoContext';
 import { UsuarioContext } from '../contexts/UsuarioContext';
+import { Link, useNavigate,useParams } from "react-router-dom";
 
 const ProductoDetalleScreen = () => {
   const { id } = useParams();
@@ -32,10 +32,10 @@ const ProductoDetalleScreen = () => {
   const manejarComentario = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post(`http://localhost:8080/api/producto/${id}/comentario`, {
+      const response = await axios.put(`http://localhost:8080/api/producto/${id}/comentario`, {
         comentario: nuevoComentario,
       });
-      setComentarios([...comentarios, response.data]);
+      setComentarios([...comentarios, response.data.comentario]);
       setNuevoComentario("");
     } catch (error) {
       console.error("Error al agregar comentario:", error.response ? error.response.data : error.message);
@@ -86,11 +86,14 @@ const ProductoDetalleScreen = () => {
               </Form>
             </Card.Body>
           </Card>
+          <Link to="/productos" className="btn btn-secondary mt-3">
+            Regresar a productos
+          </Link>
         </Col>
         <Col md={6}>
           <h3>Comentarios</h3>
           {comentarios.length === 0 ? (
-            <p>No hay comentarios aún. Sé el primero en comentar!</p>
+            <p>No hay comentarios aún. ¡Sé el primero en comentar!</p>
           ) : (
             <ul>
               {comentarios.map((comentario, index) => (

@@ -23,6 +23,9 @@ import { CarritoProductoProvider } from "./contexts/CarritoProductoContext";
 import { PedidoProvider } from "./contexts/PedidoContext";
 import { PagoProvider } from "./contexts/PagoContext";
 import { FacturaProvider } from "./contexts/FacturaContext";
+import FacturaForm from "./FacturaForm"; // Importa FacturaForm
+import FacturaScreen from "./FacturaScreen";
+import NavigationBar from "./components/NavigationBar";
 
 const App = () => {
   const location = useLocation();

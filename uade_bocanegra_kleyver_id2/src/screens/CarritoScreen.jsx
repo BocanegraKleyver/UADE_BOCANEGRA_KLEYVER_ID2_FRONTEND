@@ -4,10 +4,13 @@ import axios from 'axios';
 import { CarritoContext } from '../contexts/CarritoContext';
 import { Link } from 'react-router-dom'; // Importamos Link desde react-router-dom
 import { PedidoContext } from '../contexts/PedidoContext'; // Importamos PedidoContext
+import { CarritoProductoContext } from '../contexts/CarritoProductoContext'; // Importamos CarritoProductoContext
+
 
 const CarritoScreen = () => {
   const { carrito } = useContext(CarritoContext);
   const { crearPedido } = useContext(PedidoContext); // Importamos crearPedido
+  const { carritoProducto } = useContext(CarritoProductoContext); 
   const [carritoProductos, setCarritoProductos] = useState([]);
   const [editando, setEditando] = useState(null);
   const [tempCantidad, setTempCantidad] = useState({});
@@ -55,23 +58,6 @@ const CarritoScreen = () => {
     setTempCantidad({ [productoId]: producto.cantidad });
   };
 
-
-  // const handleConfirmar = async (productoId) => {
-  //   try {
-  //     const nuevaCantidad = tempCantidad[productoId];
-  //     const response = await axios.put(`http://localhost:8080/api/carritoProducto/${productoId}`, {
-  //       cantidad: nuevaCantidad,
-  //     });
-  //     const productoActualizado = response.data;
-
-  //     setCarritoProductos(carritoProductos.map((prod) =>
-  //       prod.id === productoId ? { ...prod, cantidad: productoActualizado.cantidad, precioCarritoDelProducto: productoActualizado.precioCarritoDelProducto } : prod
-  //     ));
-  //     setEditando(null);
-  //   } catch (error) {
-  //     console.error('Error al confirmar la cantidad del producto en el carrito:', error.response ? error.response.data : error.message);
-  //   }
-  // };
   
   const handleConfirmar = async (productoId) => {
     try {
@@ -124,50 +110,105 @@ const CarritoScreen = () => {
     }
   };
 
-  return (
-    <Container>
-      <h1>Carrito</h1>
-      {error && <Alert variant="danger">{error}</Alert>}
-      {carritoProductos.length > 0 ? (
-        <div>
-          <p>Estos son los productos en tu carrito:</p>
-          <Row>
-            {carritoProductos.map((carritoProducto) => (
-              <Col md={4} key={carritoProducto.id} className="mb-3">
-                <div className="card">
-                  {carritoProducto.producto && <img src={carritoProducto.producto} className="card-img-top" alt="Producto" />}
-                  <div className="card-body">
-                    <h5 className="card-title">Producto</h5>
-                    <p className="card-text">Cantidad: {carritoProducto.cantidad}</p>
-                    <p className="card-text">Precio: ${carritoProducto.precioCarritoDelProducto}</p>
-                    <p className="card-text">Stock: {carritoProducto.stock}</p>
-                    <Button variant="danger" onClick={() => handleEliminarDelCarrito(carritoProducto.id)}>Eliminar</Button>
-                    {editando === carritoProducto.id ? (
-                      <div className="mt-2">
-                        <Button variant="secondary" onClick={() => handleModificarCantidad(carritoProducto.id, tempCantidad[carritoProducto.id] - 1)} disabled={tempCantidad[carritoProducto.id] <= 1}>-</Button>
-                        <span className="mx-2">{tempCantidad[carritoProducto.id]}</span>
-                        <Button variant="secondary" onClick={() => handleModificarCantidad(carritoProducto.id, tempCantidad[carritoProducto.id] + 1)}>+</Button>
-                        <Button variant="success" className="ml-2" onClick={() => handleConfirmar(carritoProducto.id)}>Confirmar</Button>
-                        <Button variant="warning" className="ml-2" onClick={() => handleCancelar(carritoProducto.id)}>Cancelar</Button>
-                      </div>
-                    ) : (
-                      <Button variant="primary" onClick={() => handleEdit(carritoProducto.id)}>Modificar</Button>
-                    )}
-                  </div>
+//   return (
+//     <Container>
+//       <h1>Carrito</h1>
+//       {error && <Alert variant="danger">{error}</Alert>}
+//       {carritoProductos.length > 0 ? (
+//         <div>
+//           <p>Estos son los productos en tu carrito:</p>
+//           <Row>
+//             {carritoProductos.map((carritoProducto) => (
+//               <Col md={4} key={carritoProducto.id} className="mb-3">
+//                 <div className="card">
+//                   {carritoProducto.producto && <img src={carritoProducto.producto} className="card-img-top" alt="Producto" />}
+//                   <div className="card-body">
+//                     <h5 className="card-title">Producto</h5>
+//                     <p className="card-text">Cantidad: {carritoProducto.cantidad}</p>
+//                     <p className="card-text">Precio: ${carritoProducto.precioCarritoDelProducto}</p>
+//                     <p className="card-text">Stock: {carritoProducto.stock}</p>
+//                     <Button variant="danger" onClick={() => handleEliminarDelCarrito(carritoProducto.id)}>Eliminar</Button>
+//                     {editando === carritoProducto.id ? (
+//                       <div className="mt-2">
+//                         <Button variant="secondary" onClick={() => handleModificarCantidad(carritoProducto.id, tempCantidad[carritoProducto.id] - 1)} disabled={tempCantidad[carritoProducto.id] <= 1}>-</Button>
+//                         <span className="mx-2">{tempCantidad[carritoProducto.id]}</span>
+//                         <Button variant="secondary" onClick={() => handleModificarCantidad(carritoProducto.id, tempCantidad[carritoProducto.id] + 1)}>+</Button>
+//                         <Button variant="success" className="ml-2" onClick={() => handleConfirmar(carritoProducto.id)}>Confirmar</Button>
+//                         <Button variant="warning" className="ml-2" onClick={() => handleCancelar(carritoProducto.id)}>Cancelar</Button>
+//                       </div>
+//                     ) : (
+//                       <Button variant="primary" onClick={() => handleEdit(carritoProducto.id)}>Modificar</Button>
+//                     )}
+//                   </div>
+//                 </div>
+//               </Col>
+//             ))}
+//           </Row>
+//           {/* Utilizamos Link para redirigir a la pantalla de realizar pedido */}
+//           <Link to="/realizar-pedido">
+//           <Button variant="primary" onClick={handleRealizarPedido}>Realizar Pedido</Button>
+//           </Link>
+//         </div>
+//       ) : (
+//         <p>No hay productos en tu carrito.</p>
+//       )}
+//     </Container>
+//   );
+// };
+
+// export default CarritoScreen;
+return (
+  <Container>
+    <h1>Carrito</h1>
+    {error && <Alert variant="danger">{error}</Alert>}
+    {carritoProductos.length > 0 ? (
+      <div>
+        <p>Estos son los productos en tu carrito:</p>
+        <Row>
+          {carritoProductos.map((carritoProducto) => (
+            <Col md={4} key={carritoProducto.id} className="mb-3">
+              <div className="card">
+                {carritoProducto.producto && carritoProducto.producto.imagen && (
+                  <img src={carritoProducto.producto.imagen} className="card-img-top" alt={carritoProducto.producto.nombre} />
+                )}
+                <div className="card-body">
+                  <h5 className="card-title">{carritoProducto.producto && carritoProducto.producto.imagen}</h5>
+                  <p className="card-text">Cantidad: {carritoProducto.cantidad}</p>
+                  <p className="card-text">Precio: ${carritoProducto.precioCarritoDelProducto}</p>
+                  {carritoProducto.producto && (
+                    <p className="card-text">Stock: {carritoProducto.producto.stock}</p>
+                  )}
+                  <Button variant="danger" onClick={() => handleEliminarDelCarrito(carritoProducto.id)}>Eliminar</Button>
+                  {editando === carritoProducto.id ? (
+                    <div className="mt-2">
+                      <Button variant="secondary" onClick={() => handleModificarCantidad(carritoProducto.id, tempCantidad[carritoProducto.id] - 1)} disabled={tempCantidad[carritoProducto.id] <= 1}>-</Button>
+                      <span className="mx-2">{tempCantidad[carritoProducto.id]}</span>
+                      <Button variant="secondary" onClick={() => handleModificarCantidad(carritoProducto.id, tempCantidad[carritoProducto.id] + 1)}>+</Button>
+                      <Button variant="success" className="ml-2" onClick={() => handleConfirmar(carritoProducto.id)}>Confirmar</Button>
+                      <Button variant="warning" className="ml-2" onClick={() => handleCancelar(carritoProducto.id)}>Cancelar</Button>
+                    </div>
+                  ) : (
+                    <Button variant="primary" onClick={() => handleEdit(carritoProducto.id)}>Modificar</Button>
+                  )}
                 </div>
-              </Col>
-            ))}
-          </Row>
-          {/* Utilizamos Link para redirigir a la pantalla de realizar pedido */}
+              </div>
+            </Col>
+          ))}
+        </Row>
+        <div className="mt-3">
+          <Link to="/home">
+            <Button variant="secondary">Volver a Principal</Button>
+          </Link>
           <Link to="/realizar-pedido">
-          <Button variant="primary" onClick={handleRealizarPedido}>Realizar Pedido</Button>
+            <Button variant="primary" onClick={handleRealizarPedido}>Realizar Pedido</Button>
           </Link>
         </div>
-      ) : (
-        <p>No hay productos en tu carrito.</p>
-      )}
-    </Container>
-  );
+      </div>
+    ) : (
+      <p>No hay productos en tu carrito.</p>
+    )}
+  </Container>
+);
 };
 
 export default CarritoScreen;

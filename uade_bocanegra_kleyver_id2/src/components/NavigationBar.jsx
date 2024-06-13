@@ -40,9 +40,9 @@ const NavigationBar = () => {
           <Nav className="ml-auto">
             <Nav.Link as={Link} to="/home">Home</Nav.Link>
             <Nav.Link as={Link} to="/productos">Productos</Nav.Link>
-            <Nav.Link as={Link} to="/contacto">Contacto</Nav.Link>
             <Nav.Link as={Link} to="/carrito">Carrito</Nav.Link>
-            {/* Mostrar el enlace solo si el usuario es administrador */}
+            <Nav.Link as={Link} to="/pedido">Pedidos</Nav.Link> 
+            <Nav.Link as={Link} to="/pago">Pagos</Nav.Link> 
             {usuario && usuario.usuario.role === 'admin' && (
               <Nav.Link as={Link} to="/cargar-producto">Cargar Producto</Nav.Link>
             )}
@@ -53,6 +53,7 @@ const NavigationBar = () => {
               </>
             )}
             {!isAuthRoute && <Nav.Link as={Link} to="/" onClick={handleLogout}>Cerrar Sesión</Nav.Link>}
+            <Nav.Link as={Link} to="/contacto">Contacto</Nav.Link>
           </Nav>
         </Navbar.Collapse>
       </Container>

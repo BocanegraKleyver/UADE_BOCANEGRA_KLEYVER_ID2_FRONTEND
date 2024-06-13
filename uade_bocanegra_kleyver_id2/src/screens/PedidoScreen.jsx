@@ -1,5 +1,5 @@
 import React, { useContext, useState, useEffect } from 'react';
-import { Container, Button } from 'react-bootstrap';
+import { Container, Button, Form } from 'react-bootstrap'; // Importa Form aquí
 import { PedidoContext } from '../contexts/PedidoContext'; // Ajusta la ruta según tu estructura de carpetas
 import { Link, useParams, useHistory } from 'react-router-dom'; // Importa useHistory
 import { PagoContext } from '../contexts/PagoContext'; // Importa el contexto de pago
@@ -11,13 +11,15 @@ const PedidoScreen = ({ history }) => { // Pasamos history como prop
   const [pedido, setPedido] = useState(null);
   const { crearPago } = useContext(PagoContext);
   const [error, setError] = useState(null);
-  
+  const [condicionIVA, setCondicionIVA] = useState('Consumidor Final'); // Estado para la condición IVA seleccionada
+
 
   useEffect(() => {
     const fetchPedido = async () => {
       try {
         const pedidoObtenido = await obtenerPedidoPorId(id);
         setPedido(pedidoObtenido);
+        setCondicionIVA(pedidoObtenido.condicionIVA); 
       } catch (error) {
         console.error('Error al obtener el pedido:', error.response ? error.response.data : error.message);
       }
@@ -49,37 +51,6 @@ const PedidoScreen = ({ history }) => { // Pasamos history como prop
       console.error('Error al ir a la página principal:', error.response ? error.response.data : error.message);
     }
   };
-
-  // const handleIrAPagar = async () => {
-  //   try {
-  //     if (!pedido || !pedido.id) {
-  //       setError('No se puede realizar el pago: pedido no encontrado.');
-  //       return;
-  //     }
-  
-  //     const nuevoPago = {
-  //       usuarioId: pedido.usuarioId, 
-  //       pedidoId: pedido.id,
-  //       fecha: new Date().toISOString(),
-  //       importeTotal: pedido.importe,
-  //       metodoPago: "", 
-  //       estadoPago: pedido.estado,
-  //       numeroTransaccion: "",
-  //       metodoEnvio: "", 
-  //       informacionContacto: pedido.usuarioId.email, 
-  //       notasCliente: "" 
-  //     };
-  
-  //     // Creamos el pago y obtenemos el nuevo ID
-  //     const response = await axios.post('http://localhost:8080/api/pago', nuevoPago);
-  //     const nuevoPagoId = response.data.id;
-  
-  //     // Redireccionamos a la página de pago usando el nuevo ID del pago
-  //     window.location.href = `/pago/${nuevoPagoId}`;
-  //   } catch (error) {
-  //     setError(error.response ? error.response.data : error.message); 
-  //   }
-  // };
 
   const handleIrAPagar = async () => {
     try {
@@ -116,6 +87,22 @@ const PedidoScreen = ({ history }) => { // Pasamos history como prop
     return new Date(dateString).toLocaleDateString(undefined, options);
   };
 
+  const handleCondicionIVAChange = (event) => {
+    setCondicionIVA(event.target.value);
+  };
+
+  const handleGuardarCambios = async () => {
+    try {
+      const pedidoActualizado = { ...pedido, condicionIVA };
+      await actualizarPedido(id, pedidoActualizado);
+      setPedido(pedidoActualizado);
+      alert('Condición IVA actualizada correctamente');
+    } catch (error) {
+      console.error('Error al actualizar la condición IVA:', error.response ? error.response.data : error.message);
+    }
+  };
+
+
   return (
     <Container>
       <h1>Detalle del Pedido</h1>
@@ -130,7 +117,16 @@ const PedidoScreen = ({ history }) => { // Pasamos history como prop
           <p>Nombre: {pedido.nombreCliente}</p>
           <p>Apellido: {pedido.apellidoCliente}</p>
           <p>Dirección: {pedido.direccionCliente}</p>
-          <p>Condición IVA: {pedido.condicionIVA}</p>
+          <Form.Group controlId="condicionIVA">
+            <Form.Label>Condición IVA</Form.Label>
+            <Form.Control as="select" value={condicionIVA} onChange={handleCondicionIVAChange}>
+              <option value="Monotributista">Monotributista</option>
+              <option value="ConsumidorFinal">Consumidor Final</option>
+              <option value="ConsumidorFinal">Exento</option>
+              <option value="ResponsableInscripto">Responsable Inscripto</option>
+            </Form.Control>
+          </Form.Group>
+          <Button variant="success" onClick={handleGuardarCambios}>Guardar Cambios</Button>
           <h2>Importe Total</h2>
           <p>Importe: ${pedido.importe}</p>
           {/* Puedes agregar más detalles del pedido si es necesario */}
@@ -148,4 +144,4 @@ const PedidoScreen = ({ history }) => { // Pasamos history como prop
   );
 };
 
-export default PedidoScreen; // Agregamos withRouter aquí para tener acceso a history
+export default PedidoScreen; 

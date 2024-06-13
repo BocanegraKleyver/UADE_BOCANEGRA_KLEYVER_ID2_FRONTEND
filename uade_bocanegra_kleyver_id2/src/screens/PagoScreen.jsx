@@ -1,8 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import { Container, Row, Col, Button, Alert, Form } from 'react-bootstrap';
 import axios from 'axios';
-import { useParams } from 'react-router-dom';
+import { useParams, Link } from 'react-router-dom'; // Importa Link
 import FacturaScreen from './FacturaScreen'; // Importa el componente FacturaScreen
+import { PedidoContext } from '../contexts/PedidoContext';
+import FacturaForm from '../components/FacturaForm'; // Importa el componente FacturaForm
+import { generarNumeroAlfanumerico, generarNumero } from '../utils'; // Importa tus funciones de utilidad
 
 
 const PagoScreen = () => {
@@ -15,7 +18,7 @@ const PagoScreen = () => {
     numero: '',
     nombre: '',
     mes: '',
-    año : '',
+    año: '',
     cvc: '',
   });
   const [aliasTransferencia, setAliasTransferencia] = useState('');
@@ -56,29 +59,29 @@ useEffect(() => {
   
       const nuevaFactura = {
         usuarioId: pago.usuarioId,
-        pagoId: pago.id, // Asegúrate de usar el ID correcto del pago
+        pagoId: pago.id,
         pedidoId: pago.pedidoId,
         fechaFactura: new Date().toISOString(),
         importeTotal: pago.importeTotal,
         metodoPago: pago.metodoPago,
-        numeroTransaccion: 1, // Esto podría necesitar una lógica para generar un número de transacción real
+        numeroTransaccion: generarNumeroAlfanumerico(16),
         metodoEnvio: pago.metodoEnvio,
         informacionContacto: pago.informacionContacto,
         notasCliente: "", // Esto puede llenarse con cualquier nota relevante del cliente
-        costoEnvio: 500,
-        impuestos: 300,
-        descuentos: 100,
+        costoEnvio: 0,
+        impuestos: 0,
+        descuentos: 0,
         nombreUsuario: pago.nombreUsuario,
         apellidoUsuario: pago.apellidoUsuario,
         direccionUsuario: pago.direccionUsuario,
         documentoIdentidadUsuario: pago.documentoIdentidadUsuario,
         emailUsuario: pago.emailUsuario,
-        numeroFactura: 12121212, // Asegúrate de que este número sea generado o único
-        serieFactura: 12121212, // Asegúrate de que esta serie sea generada o única
+        numeroFactura: generarNumero(7), 
+        serieFactura: generarNumero(4), 
         estadoFactura: "Completada",
         nombreVendedor: "KleyStore",
         direccionVendedor: "UADE - Lima 789",
-        identificacionFiscalVendedor: "", // Agrega la identificación fiscal del vendedor si es necesario
+        identificacionFiscalVendedor: "KleyStore 27/04", // Agrega la identificación fiscal del vendedor si es necesario
         condicionesPago: pago.metodoPago,
         notasAdicionales: "", // Agrega cualquier nota adicional relevante
       };
@@ -101,6 +104,25 @@ useEffect(() => {
     }
   };
 
+
+
+// Función para generar un número alfanumérico de longitud dada
+const generarNumeroAlfanumerico = (longitud) => {
+  const caracteres = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+  let resultado = '';
+  for (let i = 0; i < longitud; i++) {
+    resultado += caracteres.charAt(Math.floor(Math.random() * caracteres.length));
+  }
+  return resultado;
+};
+
+const generarNumero = (longitud) => {
+  let resultado = '';
+  for (let i = 0; i < longitud; i++) {
+    resultado += Math.floor(Math.random() * 10).toString();
+  }
+  return resultado;
+};
 
   // Manejador para cancelar la compra
   const handleCancelarCompra = async () => {
@@ -201,6 +223,7 @@ useEffect(() => {
               <p>ID del Pago: {pago.id}</p>
               <p>Fecha: {pago.fecha}</p>
               <p>Importe Total: ${pago.importeTotal}</p>
+              
               <Form>
 
               <Form.Group controlId="metodoEnvio">
@@ -314,9 +337,13 @@ useEffect(() => {
 </Form.Group>
                 <Button variant="primary" onClick={handleRealizarCompra}>Realizar Compra</Button>{' '}
           
-              <Button onClick={handleCancelarCompra} variant="danger">
-                Cancelar Compra
-              </Button>
+
+                <Link to="/home">
+                  <Button variant="danger" onClick={handleCancelarCompra}>
+                    Cancelar Compra
+                  </Button>
+                </Link>
+
               </Form>
             </div>
           ) : (

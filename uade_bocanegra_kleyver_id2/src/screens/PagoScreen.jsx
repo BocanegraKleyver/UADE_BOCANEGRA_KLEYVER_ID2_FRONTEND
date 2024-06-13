@@ -4,7 +4,7 @@ import axios from 'axios';
 import { useParams, Link } from 'react-router-dom'; // Importa Link
 import FacturaScreen from './FacturaScreen'; // Importa el componente FacturaScreen
 import { PedidoContext } from '../contexts/PedidoContext';
-import FacturaForm from '../components/FacturaForm'; // Importa el componente FacturaForm
+import CrearFacturaForm from '../components/CrearFacturaForm'; 
 import { generarNumeroAlfanumerico, generarNumero } from '../utils'; // Importa tus funciones de utilidad
 
 
@@ -225,95 +225,92 @@ const generarNumero = (longitud) => {
               <p>Importe Total: ${pago.importeTotal}</p>
               
               <Form>
+                <Form.Group controlId="metodoEnvio">
+                  <Form.Label>Método de Envío</Form.Label>
+                  <Form.Control
+                    as="select"
+                    value={pago.metodoEnvio}
+                    onChange={(e) => handleMetodoEnvioChange(e.target.value)}
+                    disabled={pago.metodoPago === 'Efectivo'}
+                  >
+                    <option value="">Selecciona un método de envío</option>
+                    <option value="Envío flex" disabled={pago.metodoPago === 'Efectivo'}>Envío flex</option>
+                    <option value="Envío normal de 3 a 5 días" disabled={pago.metodoPago === 'Efectivo'}>Envío normal de 3 a 5 días</option>
+                    <option value="Retiro en sucursal">Retiro en sucursal</option>
+                  </Form.Control>
+                </Form.Group>
 
-              <Form.Group controlId="metodoEnvio">
-  <Form.Label>Método de Envío</Form.Label>
-  <Form.Control
-    as="select"
-    value={pago.metodoEnvio}
-    onChange={(e) => handleMetodoEnvioChange(e.target.value)}
-    disabled={pago.metodoPago === 'Efectivo'}
-  >
-    <option value="">Selecciona un método de envío</option>
-    <option value="Envío flex" disabled={pago.metodoPago === 'Efectivo'}>Envío flex</option>
-    <option value="Envío normal de 3 a 5 días" disabled={pago.metodoPago === 'Efectivo'}>Envío normal de 3 a 5 días</option>
-    <option value="Retiro en sucursal">Retiro en sucursal</option>
-  </Form.Control>
-</Form.Group>
+                <Form.Group controlId="metodoPago">
+                  <Form.Label>Método de Pago</Form.Label>
+                  <Form.Control
+                    as="select"
+                    value={pago.metodoPago}
+                    onChange={(e) => handleMetodoPagoChange(e.target.value)}
+                  >
+                    <option value="">Selecciona un método de pago</option>
+                    <option value="Tarjeta de crédito">Tarjeta de crédito</option>
+                    <option value="Efectivo">Efectivo</option>
+                    <option value="Transferencia">Transferencia</option>
+                  </Form.Control>
+                </Form.Group>
 
+                {pago.metodoPago === 'Transferencia' && (
+                  <p>Nuestro alias es: <strong>KleyStore.Transferencias</strong>. Cuando realice la compra, por favor deje en comentarios el ID del pago para agilizar el trámite.</p>
+                )}
 
-              <Form.Group controlId="metodoPago">
-  <Form.Label>Método de Pago</Form.Label>
-  <Form.Control
-    as="select"
-    value={pago.metodoPago}
-    onChange={(e) => handleMetodoPagoChange(e.target.value)}
-  >
-    <option value="">Selecciona un método de pago</option>
-    <option value="Tarjeta de crédito">Tarjeta de crédito</option>
-    <option value="Efectivo">Efectivo</option>
-    <option value="Transferencia">Transferencia</option>
-  </Form.Control>
-</Form.Group>
-{pago.metodoPago === 'Transferencia' && (
-  <p>Nuestro alias es: <strong>KleyStore.Transferencias</strong>. Cuando realice la compra, por favor deje en comentarios el ID del pago para agilizar el trámite.</p>
-)}
-{pago.metodoPago === 'Tarjeta de crédito' && (
-  <>
-    <Form.Group controlId="numeroTarjeta">
-      <Form.Label>Número de Tarjeta</Form.Label>
-      <Form.Control
-        type="text"
-        placeholder="Ingrese los 16 números de la tarjeta"
-        value={datosTarjeta.numero}
-        onChange={(e) => setDatosTarjeta({ ...datosTarjeta, numero: e.target.value })}
-      />
-    </Form.Group>
+                {pago.metodoPago === 'Tarjeta de crédito' && (
+                  <>
+                    <Form.Group controlId="numeroTarjeta">
+                      <Form.Label>Número de Tarjeta</Form.Label>
+                      <Form.Control
+                        type="text"
+                        placeholder="Ingrese los 16 números de la tarjeta"
+                        value={datosTarjeta.numero}
+                        onChange={(e) => setDatosTarjeta({ ...datosTarjeta, numero: e.target.value })}
+                      />
+                    </Form.Group>
 
-    <Form.Group controlId="nombreTarjeta">
-      <Form.Label>Nombre y Apellido en la Tarjeta</Form.Label>
-      <Form.Control
-        type="text"
-        placeholder="Nombre y Apellido"
-        value={datosTarjeta.nombre}
-        onChange={(e) => setDatosTarjeta({ ...datosTarjeta, nombre: e.target.value })}
-      />
-    </Form.Group>
-    
-    <Form.Group controlId="mesVencimiento">
-      <Form.Label>Mes de Vencimiento</Form.Label>
-      <Form.Control
-        type="text"
-        placeholder="MM"
-        value={datosTarjeta.mes}
-        onChange={(e) => setDatosTarjeta({ ...datosTarjeta, mes: e.target.value })}
-      />
-    </Form.Group>
-    
-    <Form.Group controlId="anioVencimiento">
-      <Form.Label>Año de Vencimiento</Form.Label>
-      <Form.Control
-        type="text"
-        placeholder="AAAA"
-        value={datosTarjeta.año}
-        onChange={(e) => setDatosTarjeta({ ...datosTarjeta, año: e.target.value })}
-      />
-    </Form.Group>
+                    <Form.Group controlId="nombreTarjeta">
+                      <Form.Label>Nombre y Apellido en la Tarjeta</Form.Label>
+                      <Form.Control
+                        type="text"
+                        placeholder="Nombre y Apellido"
+                        value={datosTarjeta.nombre}
+                        onChange={(e) => setDatosTarjeta({ ...datosTarjeta, nombre: e.target.value })}
+                      />
+                    </Form.Group>
+                    
+                    <Form.Group controlId="mesVencimiento">
+                      <Form.Label>Mes de Vencimiento</Form.Label>
+                      <Form.Control
+                        type="text"
+                        placeholder="MM"
+                        value={datosTarjeta.mes}
+                        onChange={(e) => setDatosTarjeta({ ...datosTarjeta, mes: e.target.value })}
+                      />
+                    </Form.Group>
+                    
+                    <Form.Group controlId="anioVencimiento">
+                      <Form.Label>Año de Vencimiento</Form.Label>
+                      <Form.Control
+                        type="text"
+                        placeholder="AAAA"
+                        value={datosTarjeta.año}
+                        onChange={(e) => setDatosTarjeta({ ...datosTarjeta, año: e.target.value })}
+                      />
+                    </Form.Group>
 
-    <Form.Group controlId="cvcTarjeta">
-      <Form.Label>CVC</Form.Label>
-      <Form.Control
-        type="password"
-        placeholder="CVC"
-        value={datosTarjeta.cvc}
-        onChange={(e) => setDatosTarjeta({ ...datosTarjeta, cvc: e.target.value })}
-      />
-    </Form.Group>
-  </>
-)}
-
-
-
+                    <Form.Group controlId="cvcTarjeta">
+                      <Form.Label>CVC</Form.Label>
+                      <Form.Control
+                        type="password"
+                        placeholder="CVC"
+                        value={datosTarjeta.cvc}
+                        onChange={(e) => setDatosTarjeta({ ...datosTarjeta, cvc: e.target.value })}
+                      />
+                    </Form.Group>
+                  </>
+                )}
 
                 <Form.Group controlId="informacionContacto">
                   <Form.Label>Información de Contacto</Form.Label>
@@ -325,25 +322,22 @@ const generarNumero = (longitud) => {
                   />
                 </Form.Group>
 
-
                 <Form.Group controlId="notasCliente">
-  <Form.Label>Comentarios</Form.Label>
-  <Form.Control
-    as="textarea"
-    rows={3} // Define la cantidad de filas para el textarea
-    placeholder="Ingrese aquí cualquier comentario adicional..."
-    onChange={handleNotasClienteChange}
-  />
-</Form.Group>
-                <Button variant="primary" onClick={handleRealizarCompra}>Realizar Compra</Button>{' '}
-          
+                  <Form.Label>Comentarios</Form.Label>
+                  <Form.Control
+                    as="textarea"
+                    rows={3} // Define la cantidad de filas para el textarea
+                    placeholder="Ingrese aquí cualquier comentario adicional..."
+                    onChange={handleNotasClienteChange}
+                  />
+                </Form.Group>
 
+                <Button variant="primary" onClick={handleRealizarCompra}>Realizar Compra</Button>{' '}
                 <Link to="/home">
                   <Button variant="danger" onClick={handleCancelarCompra}>
                     Cancelar Compra
                   </Button>
                 </Link>
-
               </Form>
             </div>
           ) : (
@@ -355,4 +349,4 @@ const generarNumero = (longitud) => {
   );
 };
 
-export default PagoScreen; // Asegúrate de tener esta línea para exportar PagoScreen
+export default PagoScreen;

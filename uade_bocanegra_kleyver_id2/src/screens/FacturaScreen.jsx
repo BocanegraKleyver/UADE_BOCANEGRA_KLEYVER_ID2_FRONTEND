@@ -1,22 +1,20 @@
-import React, { useContext, useEffect } from "react";
-import { Container, Alert } from "react-bootstrap";
-import { FacturaContext } from "../contexts/FacturaContext";
-import CrearFacturaForm from "../components/CrearFacturaForm"; // Cambia el import al nuevo componente
+import React, { useContext, useEffect } from 'react';
+import { Container, Button } from 'react-bootstrap';
+import { FacturaContext } from '../contexts/FacturaContext';
+import { PDFDownloadLink } from '@react-pdf/renderer';
+import FacturaPDF from '../components/FacturaPDF';
 
 const FacturaScreen = () => {
   const { facturas, obtenerTodasLasFacturas, loading } = useContext(FacturaContext);
 
   useEffect(() => {
-    // Llama a la función para obtener las facturas cuando el componente se monta
     obtenerTodasLasFacturas();
-  }, []); // Asegúrate de pasar un arreglo vacío como segundo parámetro para que se ejecute solo una vez
+  }, [obtenerTodasLasFacturas]);
 
   return (
     <Container>
       <h2>Facturas</h2>
       <p>Tienes {facturas.length} factura(s).</p>
-      {/* Renderizamos el componente CrearFacturaForm */}
-      <CrearFacturaForm /> {/* No es necesario pasar ninguna función aquí */}
       {loading ? (
         <p>Cargando...</p>
       ) : (
@@ -24,6 +22,14 @@ const FacturaScreen = () => {
           {facturas.map((factura) => (
             <li key={factura.id}>
               ID: {factura.id} - Importe Total: ${factura.importeTotal} - Fecha: {factura.fechaFactura}
+              <PDFDownloadLink
+                document={<FacturaPDF factura={factura} />} // Pasamos la factura completa al componente FacturaPDF
+                fileName={`factura_${factura.id}.pdf`}
+              >
+                {({ blob, url, loading, error }) =>
+                  loading ? 'Cargando...' : <Button variant="primary">Descargar PDF</Button>
+                }
+              </PDFDownloadLink>
             </li>
           ))}
         </ul>

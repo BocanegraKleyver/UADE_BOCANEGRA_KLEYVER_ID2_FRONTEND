@@ -43,6 +43,7 @@ const NavigationBar = () => {
             <Nav.Link as={Link} to="/carrito">Carrito</Nav.Link>
             <Nav.Link as={Link} to="/pedido">Pedidos</Nav.Link> 
             <Nav.Link as={Link} to="/pago">Pagos</Nav.Link> 
+            <Nav.Link as={Link} to="/factura">Facturas</Nav.Link>
             {usuario && usuario.usuario.role === 'admin' && (
               <Nav.Link as={Link} to="/cargar-producto">Cargar Producto</Nav.Link>
             )}

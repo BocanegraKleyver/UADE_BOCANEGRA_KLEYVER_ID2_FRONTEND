@@ -20,7 +20,6 @@ root.render(
           <PagoProvider>
             <FacturaProvider>
               <ProductoProvider>
-                {" "}
                 {/* Agregar ProductoProvider */}
                 <App />
               </ProductoProvider>

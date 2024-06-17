@@ -20,11 +20,13 @@ export const CarritoProvider = ({ children }) => {
   const obtenerCarrito = async (usuarioId) => {
     try {
       const response = await axios.get(`http://localhost:8080/api/carrito/${usuarioId}`);
-      setCarrito(response.data);
-      setCarritoId(response.data.id);
+      const carritoData = response.data;
+      setCarrito(carritoData);
+      setCarritoId(carritoData.id);
       setCarritoProductos(response.data.carritoProductos);
     } catch (error) {
       console.error("Error al obtener el carrito:", error.response ? error.response.data : error.message);
+      throw error;
     }
   };
 

@@ -21,7 +21,7 @@ const FacturaScreen = () => {
         <ul>
           {facturas.map((factura) => (
             <li key={factura.id}>
-              ID: {factura.id} - Importe Total: ${factura.importeTotal} - Fecha: {factura.fechaFactura}
+              ID: {factura.id} - Importe Total: ${factura.importeTotal} - Fecha: {factura.fechaFactura}  - Pago ID: {factura.pagoId}
               <PDFDownloadLink
                 document={<FacturaPDF factura={factura} />} // Pasamos la factura completa al componente FacturaPDF
                 fileName={`factura_${factura.id}.pdf`}

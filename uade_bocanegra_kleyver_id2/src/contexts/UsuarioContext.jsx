@@ -13,7 +13,7 @@ export const UsuarioProvider = ({ children }) => {
     if (storedUser) {
       const userData = JSON.parse(storedUser);
       setUsuario(userData);
-      setUsuarioId(userData.id);
+      setUsuarioId(userData.usuario.id);
     }
   }, []);
 

@@ -6,9 +6,25 @@ import { UsuarioContext } from '../contexts/UsuarioContext';
 import { CarritoContext } from '../contexts/CarritoContext';
 
 const HomeScreen = () => {
-  const { usuarioId } = useContext(UsuarioContext);
+  const { usuarioId, getUsuarioById } = useContext(UsuarioContext);
+  const [profile, setProfile] = useState(null);
   const { obtenerCarrito } = useContext(CarritoContext);
   const [productos, setProductos] = useState([]);
+
+  useEffect(() => {
+    const fetchProfile = async () => {
+      try {
+        if (usuarioId) {
+          const data = await getUsuarioById(usuarioId);
+          setProfile(data);
+        }
+      } catch (error) {
+        console.error("Error al obtener el perfil:", error.message);
+      }
+    };
+    fetchProfile();
+  }, [usuarioId, getUsuarioById]);
+
 
   useEffect(() => {
     obtenerProductosAleatorios();
@@ -22,10 +38,10 @@ const HomeScreen = () => {
       const storedUser = localStorage.getItem('user');
       if (storedUser) {
         const userData = JSON.parse(storedUser);
-        obtenerCarrito(userData.id); // Obtener el carrito del usuario del localStorage
+        obtenerCarrito(userData.usuario.id); // Obtener el carrito del usuario del localStorage
       }
     }
-  }, [usuarioId]); // Actualizar el carrito cuando el usuarioId cambie
+  }, [usuarioId, obtenerCarrito]); // Actualizar el carrito cuando el usuarioId cambie
 
   const obtenerProductosAleatorios = async () => {
     try {
@@ -53,7 +69,7 @@ const HomeScreen = () => {
   <img
     className="d-block w-100"
     style={{ maxWidth: "50%", margin: "auto" }}
-    src="https://fontmeme.com/temporary/8b8f424ba330ed0bdf173e1d0379545f.png"
+    src=""
     alt="First slide"
   />
 </Carousel.Item>

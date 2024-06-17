@@ -4,6 +4,8 @@ import { Link, useLocation, useNavigate } from 'react-router-dom';
 import Swal from 'sweetalert2';
 import { UsuarioContext } from '../contexts/UsuarioContext';
 import { CarritoContext } from '../contexts/CarritoContext';
+import { FaShoppingCart } from 'react-icons/fa'; // Importa el icono de carrito
+
 
 const NavigationBar = () => {
   const navigate = useNavigate();
@@ -39,13 +41,13 @@ const NavigationBar = () => {
         <Navbar.Collapse id="basic-navbar-nav">
           <Nav className="ml-auto">
             <Nav.Link as={Link} to="/home">Home</Nav.Link>
-            <Nav.Link as={Link} to="/productos">Productos</Nav.Link>
-            <Nav.Link as={Link} to="/carrito">Carrito</Nav.Link>
+            <Nav.Link as={Link} to="/productos">Productos</Nav.Link>          
+            <Nav.Link as={Link} to="/carrito"><FaShoppingCart style={{ fontSize: '1.5em', marginRight: '5px' }} /></Nav.Link>
             <Nav.Link as={Link} to="/pedido">Pedidos</Nav.Link> 
             <Nav.Link as={Link} to="/pago">Pagos</Nav.Link> 
             <Nav.Link as={Link} to="/factura">Facturas</Nav.Link>
             {usuario && usuario.usuario.role === 'admin' && (
-              <Nav.Link as={Link} to="/cargar-producto">Cargar Producto</Nav.Link>
+              <Nav.Link as={Link} to="/cargar-producto">Catalogo</Nav.Link>
             )}
             {usuarioId && (
               <>
@@ -63,3 +65,11 @@ const NavigationBar = () => {
 };
 
 export default NavigationBar;
+
+
+
+
+
+
+
+

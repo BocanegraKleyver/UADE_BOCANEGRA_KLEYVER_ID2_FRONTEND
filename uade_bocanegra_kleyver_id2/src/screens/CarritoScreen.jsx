@@ -2,19 +2,22 @@ import React, { useContext, useEffect, useState } from 'react';
 import { Container, Row, Col, Button, Alert } from 'react-bootstrap'; // Agregado Alert
 import axios from 'axios';
 import { CarritoContext } from '../contexts/CarritoContext';
-import { Link } from 'react-router-dom'; // Importamos Link desde react-router-dom
+import { Link,useNavigate  } from 'react-router-dom'; // Importamos Link desde react-router-dom
 import { PedidoContext } from '../contexts/PedidoContext'; // Importamos PedidoContext
 import { CarritoProductoContext } from '../contexts/CarritoProductoContext'; // Importamos CarritoProductoContext
+import { UsuarioContext } from '../contexts/UsuarioContext'; // Importamos UsuarioContext
 
 
 const CarritoScreen = () => {
   const { carrito } = useContext(CarritoContext);
   const { crearPedido } = useContext(PedidoContext); // Importamos crearPedido
   const { carritoProducto } = useContext(CarritoProductoContext); 
+ const { usuario} = useContext(UsuarioContext);
   const [carritoProductos, setCarritoProductos] = useState([]);
   const [editando, setEditando] = useState(null);
   const [tempCantidad, setTempCantidad] = useState({});
   const [error, setError] = useState('');
+  const navigate = useNavigate();
 
   useEffect(() => {
     const obtenerProductosEnCarrito = async () => {
@@ -65,7 +68,7 @@ const CarritoScreen = () => {
       const producto = carritoProductos.find((prod) => prod.id === productoId);
 
       // Validar la cantidad con el stock disponible
-      if (nuevaCantidad > producto.stock) {
+      if (nuevaCantidad > producto.producto.stock) {
         setError(`No hay suficiente stock para el producto. Stock disponible: ${producto.stock}`);
         return;
       }
@@ -104,7 +107,8 @@ const CarritoScreen = () => {
 
       const nuevoPedido = await crearPedido(carrito.id);
       // Redirigir a la página de pedido
-      window.location.href = `/pedido/${nuevoPedido.id}`;
+      navigate(`/pedido/${nuevoPedido.id}`);
+      //window.location.href = `/pedido/${nuevoPedido.id}`;
     } catch (error) {
       console.error('Error al realizar el pedido:', error.response ? error.response.data : error.message);
     }
